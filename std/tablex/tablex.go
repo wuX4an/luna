@@ -1,4 +1,4 @@
-package time
+package tablex
 
 import (
 	lua "github.com/yuin/gopher-lua"
@@ -7,9 +7,9 @@ import (
 // Loader es el punto de entrada de la librería para require("time")
 func Loader(L *lua.LState) int {
 	mod := L.SetFuncs(L.NewTable(), map[string]lua.LGFunction{
-		"now":    Now,
-		"sleep":  Sleep,
-		"format": Format,
+		"raw":    Raw,
+		"map":    Map,
+		"filter": Filter,
 	})
 	L.Push(mod)
 	return 1

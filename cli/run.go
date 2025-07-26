@@ -2,8 +2,10 @@ package cli
 
 import (
 	"fmt"
+	"luna/std"
 
 	"github.com/spf13/cobra"
+	lua "github.com/yuin/gopher-lua"
 )
 
 var runExamples = `
@@ -17,11 +19,24 @@ var runCmd = &cobra.Command{
 	Example: runExamples,
 	Args:    cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		file := ""
-		if len(args) > 0 {
-			file = args[0]
+		cmd.SilenceUsage = true  // <- siempre silenciar ayuda automática
+		cmd.SilenceErrors = true // <- siempre silenciar mensaje "Error: ..."
+
+		if len(args) == 0 {
+			_ = cmd.Help()
+			return fmt.Errorf("\nError: No script specified")
 		}
-		fmt.Printf("Running %q\n", file)
+
+		L := lua.NewState()
+		defer L.Close()
+
+		std.RegisterAll(L)
+
+		script := args[0]
+		if err := L.DoFile(script); err != nil {
+			return fmt.Errorf("\n  Error running script: %w", err)
+		}
+
 		return nil
 	},
 }

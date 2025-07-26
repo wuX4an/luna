@@ -9,7 +9,7 @@ import (
 )
 
 // format(fmt, timestamp) → string
-func format(L *lua.LState) int {
+func Format(L *lua.LState) int {
 	formatStr := L.CheckString(1)
 	timestamp := L.CheckNumber(2)
 

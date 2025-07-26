@@ -1,4 +1,4 @@
-package cli
+package docs
 
 import (
 	"fmt"
@@ -10,7 +10,7 @@ var (
 	docDir string
 )
 
-var docCmd = &cobra.Command{
+var DocCmd = &cobra.Command{
 	Use:     "docs",
 	Short:   "View Luna's documentation",
 	Example: "",
@@ -25,8 +25,4 @@ var docCmd = &cobra.Command{
 		fmt.Println("Viewing docs")
 		return nil
 	},
-}
-
-func init() {
-	Cmd.AddCommand(docCmd)
 }

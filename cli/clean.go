@@ -8,7 +8,7 @@ import (
 
 var cleanCmd = &cobra.Command{
 	Use:     "clean [DIR]",
-	Short:   "Remove the *build* directory",
+	Short:   "Remove the build directory",
 	Example: "luna clean\nluna clean .",
 	Args:    cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {

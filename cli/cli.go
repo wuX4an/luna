@@ -2,6 +2,8 @@ package cli
 
 import (
 	"fmt"
+	"luna/cli/build"
+	"luna/cli/docs"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -27,6 +29,11 @@ var Cmd = &cobra.Command{
 }
 
 func init() {
+	// Comandos
+	Cmd.AddCommand(build.BuildCmd)
+	Cmd.AddCommand(docs.DocCmd)
+
+	// Flags
 	Cmd.PersistentFlags().BoolVarP(&versionFlag, "version", "v", false, "Print version")
 
 	/*
@@ -58,9 +65,9 @@ func init() {
 
 			// Magenta bold for "Flags"
 			"{{- if .HasAvailableLocalFlags }}\n" +
-			"\033[1;35m Flags:\033[0m\n" +
+			"\n\033[1;35m Flags:\033[0m\n" +
 			"{{.LocalFlags.FlagUsages | trimTrailingWhitespaces}}\n" +
-			"{{- end }}",
+			"{{- end }}\n",
 	)
 
 }
