@@ -5,6 +5,7 @@ go 1.24.3
 require (
 	github.com/charmbracelet/bubbles v0.21.0
 	github.com/charmbracelet/bubbletea v1.3.6
+	github.com/chzyer/readline v0.0.0-20180603132655-2972be24d48e
 	github.com/spf13/cobra v1.9.1
 	github.com/yuin/gopher-lua v1.1.1
 	modernc.org/sqlite v1.38.1

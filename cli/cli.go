@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"luna/cli/build"
 	"luna/cli/docs"
+	"luna/cli/repl"
 	"os"
 
 	"github.com/spf13/cobra"
@@ -24,6 +25,13 @@ var Cmd = &cobra.Command{
 			fmt.Println("luna version 0.1.0")
 			return
 		}
+		if len(args) == 0 {
+			// No args: lanzar repl directamente
+			if err := repl.Run(); err != nil {
+				fmt.Println("Error running REPL:", err)
+			}
+			return
+		}
 		_ = cmd.Help()
 	},
 }
@@ -32,6 +40,7 @@ func init() {
 	// Comandos
 	Cmd.AddCommand(build.BuildCmd)
 	Cmd.AddCommand(docs.DocCmd)
+	Cmd.AddCommand(repl.ReplCmd)
 
 	// Flags
 	Cmd.PersistentFlags().BoolVarP(&versionFlag, "version", "v", false, "Print version")
