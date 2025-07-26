@@ -1,11 +1,11 @@
--- TIMElocal time = require("time")
+-- TIME
 
 print("\n=== TEST TIME ===")
 -- Aquí podrías añadir funciones de time para probar, si tienes disponibles
 
 
 -- RANDOM
-local random = require("random")
+local random = require("std:random")
 
 print("\n=== TEST RANDOM ===")
 
@@ -33,7 +33,7 @@ end
 
 
 -- TABLEX
-local tablex = require("tablex")
+local tablex = require("std:tablex")
 
 print("\n=== TEST TABLEX ===")
 
@@ -50,7 +50,7 @@ print(tablex.raw(filter))
 
 
 -- SQLITE
-local sqlite = require("sqlite")
+local sqlite = require("std:sqlite")
 
 print("=== TEST SQLITE EN MEMORIA ===")
 
@@ -92,3 +92,31 @@ countRows:close()
 print("\nTotal de usuarios en la tabla:", countRow.total)
 db:close()
 
+-- TEST
+print("\n=== TEST ===")
+
+local test = require("std:test")
+
+-- test 1
+test.run("simple test", function()
+  return test.expect(5):to_equal(4)
+end)
+
+-- test 2
+test("inline test", function()
+  return test.expect(42):to_equal(41)
+end)
+
+-- test 3
+test.expect(2):to_equal(2)
+
+-- test 4
+test.describe("basic math", function()
+	test.run("addition", function()
+	  return test.expect(1 + 2):to_equal(3)
+	end)
+
+	test.run("multiplication", function()
+		return test.expect(2 * 3):to_equal(5)
+	end)
+end)
