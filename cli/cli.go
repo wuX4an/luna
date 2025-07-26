@@ -5,9 +5,12 @@ import (
 	"luna/cli/build"
 	"luna/cli/docs"
 	"luna/cli/repl"
+	"luna/std"
 	"os"
+	"strings"
 
 	"github.com/spf13/cobra"
+	lua "github.com/yuin/gopher-lua"
 )
 
 var (
@@ -18,21 +21,60 @@ var (
 
 var Cmd = &cobra.Command{
 	Use:   "luna",
-	Short: "\033[1;31mLuna: A modern lua runtime",
-	Long:  "\033[3;31mLuna: A modern lua runtime\033[0m",
+	Short: "\033[2;3mLuna: A modern lua runtime\033[0m",
+	Long:  "\033[2;3mLuna: A modern lua runtime\033[0m",
+	Args:  cobra.ArbitraryArgs,
 	Run: func(cmd *cobra.Command, args []string) {
+		cmd.SilenceUsage = true
+		cmd.SilenceErrors = true
+
 		if versionFlag {
 			fmt.Println("luna version 0.1.0")
 			return
 		}
+
 		if len(args) == 0 {
-			// No args: lanzar repl directamente
 			if err := repl.Run(); err != nil {
 				fmt.Println("Error running REPL:", err)
 			}
 			return
 		}
-		_ = cmd.Help()
+
+		arg := args[0]
+		info, err := os.Stat(arg)
+
+		// Caso 1: el argumento es un archivo existente
+		if err == nil {
+			if info.IsDir() {
+				fmt.Fprintf(os.Stderr, "\033[31mError:\033[0m '%s' is a directory\n", arg)
+				return
+			}
+
+			if strings.HasSuffix(arg, ".lua") {
+				L := lua.NewState()
+				defer L.Close()
+				std.RegisterAll(L)
+
+				argTable := L.NewTable()
+				for i, a := range args {
+					L.RawSet(argTable, lua.LNumber(i), lua.LString(a))
+				}
+				L.SetGlobal("arg", argTable)
+
+				if err := L.DoFile(arg); err != nil {
+					fmt.Fprintf(os.Stderr, "\033[31mError:\033[0m The module's source code could not be parsed: %v\n", err)
+				}
+				return
+			}
+
+			// Archivo existe pero no es .lua
+			fmt.Fprintf(os.Stderr, "\033[31mError:\033[0m The module's source code could not be parsed: unsupported file type: %s\n", arg)
+			return
+		}
+
+		// Caso 2: el archivo no existe
+		fmt.Fprintf(os.Stderr, "\033[31mError:\033[0m Unknown argument: %s\n", arg)
+		fmt.Println("\033[33mTry run\033[0m: \033[2;3mluna --help\033[0m")
 	},
 }
 
