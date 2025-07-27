@@ -1,6 +1,7 @@
 package std
 
 import (
+	"luna/std/http"
 	"luna/std/random"
 	"luna/std/sqlite"
 	"luna/std/tablex"
@@ -16,4 +17,5 @@ func RegisterAll(L *lua.LState) {
 	L.PreloadModule("std:tablex", tablex.Loader)
 	L.PreloadModule("std:sqlite", sqlite.Loader)
 	L.PreloadModule("std:test", test.Loader)
+	L.PreloadModule("std:http", http.Loader)
 }

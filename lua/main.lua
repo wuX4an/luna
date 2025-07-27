@@ -132,4 +132,37 @@ test.describe("Multiplicación parametrizada", function()
   end)
 end)
 
+-- HTTP
+print("\n=== HTTP ===")
+local http = require("std:http")
+local res = http.request("GET", "https://ifconfig.me", {
+  headers = { Accept = "application/json" },
+  -- query = { q = "lua" },
+  -- timeout = 5000,
+})
+
+if res then
+  print(res.body)
+else
+  print("request failed")
+end
+
+
+-- Server
+
+http.server {
+  host = "0.0.0.0",
+  port = 3000,
+  log = true,
+  handler = {
+    ["GET /"] = function(req, res)
+      res.status = 200
+      res.body = "Hello "
+    end,
+    [404] = function(res)
+      res.status = 404
+      res.body = "not found"
+    end,
+  }
+}
 
