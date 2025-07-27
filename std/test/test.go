@@ -21,11 +21,13 @@ func Loader(L *lua.LState) int {
 }
 
 func registerTestType(L *lua.LState) {
-	mt := L.NewTypeMetatable("test")
-	L.SetField(mt, "__index", L.SetFuncs(L.NewTable(), map[string]lua.LGFunction{
+	mod := L.NewTypeMetatable("test")
+	L.SetField(mod, "__index", L.SetFuncs(L.NewTable(), map[string]lua.LGFunction{
 		"run":      Run,
 		"expect":   Expect,
 		"describe": Describe,
+		"each":     Each,
 	}))
-	L.SetField(mt, "__call", L.NewFunction(RunOnCall)) // __call para llamar a test(...)
+
+	L.SetField(mod, "__call", L.NewFunction(RunOnCall)) // __call para llamar a test(...)
 }

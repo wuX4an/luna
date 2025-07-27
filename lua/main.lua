@@ -120,3 +120,16 @@ test.describe("basic math", function()
 		return test.expect(2 * 3):to_equal(5)
 	end)
 end)
+
+-- test 5
+test.describe("Multiplicación parametrizada", function()
+  test.each({
+    {a = 2, b = 3, esperado = 7, name = "2 * 3 = 6"},
+    {a = 5, b = 5, esperado = 25, name = "5 * 5 = 25"},
+  }, function(caso)
+    local res = caso.a * caso.b
+    return test.expect(res):to_equal(caso.esperado)
+  end)
+end)
+
+
