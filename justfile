@@ -1,8 +1,8 @@
 # Variables
 src-dir := "./src"
 cli-dir := "./cli"
-runtime-dir := "./cli/build/runtime"
-runtime-bin-dir := "./cli/build/runtime/bin"
+runtime-dir := "./runtime"
+runtime-bin-dir := "./build/runtimes"
 build-dir := "build"
 bin-name := "luna"
 go-flags := "-ldflags='-s -w'"

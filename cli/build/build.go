@@ -1,21 +1,16 @@
-package build // ¡Importante! Cambiado a paquete 'build'
+package build
 
 import (
-	"embed"
 	"encoding/binary"
 	"errors"
 	"fmt"
 	"io"
+	"luna"
 	"os"
 	"strings"
 
 	"github.com/spf13/cobra"
 )
-
-// embeddedRuntimes contiene los binarios de tiempo de ejecución incrustados.
-//
-//go:embed runtime/bin/*
-var embeddedRuntimes embed.FS
 
 var (
 	// buildTarget almacena el valor de la bandera --target.
@@ -73,8 +68,8 @@ var BuildCmd = &cobra.Command{
 		}
 
 		// Construye la clave para el binario de tiempo de ejecución incrustado.
-		key := fmt.Sprintf("runtime/bin/runtime_%s_%s", buildOS, buildArch)
-		runtimeBinary, err := embeddedRuntimes.ReadFile(key)
+		key := fmt.Sprintf("build/runtimes/runtime_%s_%s", buildOS, buildArch)
+		runtimeBinary, err := luna.EmbeddedRuntimes.ReadFile(key)
 		if err != nil {
 			return fmt.Errorf("no embedded runtime for target %s/%s: %w", buildOS, buildArch, err)
 		}
@@ -168,5 +163,4 @@ func init() {
 	BuildCmd.Flags().StringVarP(&buildTarget, "target", "t", "", "Target platform in the form os/arch (linux/amd64)")
 	BuildCmd.Flags().BoolVarP(&buildList, "list", "l", false, "List available platforms")
 	BuildCmd.Flags().StringVarP(&buildOutput, "output", "o", "", "Output file name (optional)")
-
 }

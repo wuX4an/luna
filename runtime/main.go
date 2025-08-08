@@ -77,10 +77,14 @@ func run() error {
 	if !found {
 		return errors.New("main.lua not found in bundle")
 	}
-
-	L := lua.NewState()
+	L := lua.NewState(lua.Options{
+		SkipOpenLibs: true,
+	})
 	defer L.Close()
 
+	lua.OpenBase(L)
+	lua.OpenPackage(L)
+	lua.OpenString(L)
 	std.RegisterAll(L)
 
 	// Ejecutar el contenido en memoria
