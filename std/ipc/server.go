@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"os/signal"
 	"sync"
+	"syscall"
 
 	lua "github.com/yuin/gopher-lua"
 )
@@ -140,7 +142,16 @@ func serverStart(L *lua.LState) int {
 		return 0
 	}
 
-	// Eliminar socket si existe
+	// Parámetro opcional 3: función Lua para log de cierre
+	var onClose lua.LValue = lua.LNil
+	if L.GetTop() >= 3 {
+		onClose = L.CheckAny(3)
+		if onClose.Type() != lua.LTFunction && onClose.Type() != lua.LTNil {
+			L.ArgError(3, "function or nil expected")
+			return 0
+		}
+	}
+
 	if _, err := os.Stat(s.path); err == nil {
 		os.Remove(s.path)
 	}
@@ -150,11 +161,39 @@ func serverStart(L *lua.LState) int {
 		L.RaiseError("error listening on unix socket: %v", err)
 		return 0
 	}
-
 	s.listener = l
 
 	go s.acceptLoop(L, handler)
-	select {}
+
+	sigc := make(chan os.Signal, 1)
+	signal.Notify(sigc, syscall.SIGINT, syscall.SIGTERM)
+
+	sig := <-sigc
+
+	if onClose != lua.LNil {
+		// Call the Lua onClose function with a formal shutdown message
+		msg := fmt.Sprintf("Signal received: %v.", sig)
+		err := L.CallByParam(lua.P{
+			Fn:      onClose,
+			NRet:    0,
+			Protect: true,
+		}, lua.LString(msg))
+		if err != nil {
+			fmt.Println("Error invoking onClose callback:", err)
+		}
+	} else {
+		fmt.Printf("Signal received: %v.\n", sig)
+	}
+
+	s.mu.Lock()
+	if !s.closed {
+		s.listener.Close()
+		os.Remove(s.path)
+		s.closed = true
+	}
+	s.mu.Unlock()
+
+	return 0
 }
 
 func serverClose(L *lua.LState) int {
