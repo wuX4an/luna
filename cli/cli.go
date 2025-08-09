@@ -5,7 +5,7 @@ import (
 	"luna/cli/build"
 	"luna/cli/docs"
 	"luna/cli/repl"
-	"luna/std"
+	"luna/src/luavm"
 	"os"
 	"strings"
 
@@ -51,9 +51,8 @@ var Cmd = &cobra.Command{
 			}
 
 			if strings.HasSuffix(arg, ".lua") {
-				L := lua.NewState()
+				L := luavm.NewLuaVM()
 				defer L.Close()
-				std.RegisterAll(L)
 
 				argTable := L.NewTable()
 				for i, a := range args {
@@ -115,12 +114,11 @@ func init() {
 			"{{- end }}" +
 
 			// Magenta bold for "Flags"
-			"{{- if .HasAvailableLocalFlags }}\n" +
+			"{{- if .HasAvailableLocalFlags }}" +
 			"\n\033[1;35m Flags:\033[0m\n" +
 			"{{.LocalFlags.FlagUsages | trimTrailingWhitespaces}}\n" +
 			"{{- end }}\n",
 	)
-
 }
 
 func Execute() {

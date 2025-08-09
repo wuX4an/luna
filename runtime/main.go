@@ -8,10 +8,8 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"luna/std" // importa tu std
+	"luna/src/luavm" // importa tu std
 	"os"
-
-	lua "github.com/yuin/gopher-lua"
 )
 
 const (
@@ -77,15 +75,8 @@ func run() error {
 	if !found {
 		return errors.New("main.lua not found in bundle")
 	}
-	L := lua.NewState(lua.Options{
-		SkipOpenLibs: true,
-	})
+	L := luavm.NewLuaVM()
 	defer L.Close()
-
-	lua.OpenBase(L)
-	lua.OpenPackage(L)
-	lua.OpenString(L)
-	std.RegisterAll(L)
 
 	// Ejecutar el contenido en memoria
 	if err := L.DoString(mainLuaContent.String()); err != nil {

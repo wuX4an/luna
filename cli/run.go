@@ -2,10 +2,9 @@ package cli
 
 import (
 	"fmt"
-	"luna/std"
+	"luna/src/luavm"
 
 	"github.com/spf13/cobra"
-	lua "github.com/yuin/gopher-lua"
 )
 
 var runExamples = `
@@ -27,10 +26,8 @@ var runCmd = &cobra.Command{
 			return fmt.Errorf("\nError: No script specified")
 		}
 
-		L := lua.NewState()
+		L := luavm.NewLuaVM()
 		defer L.Close()
-
-		std.RegisterAll(L)
 
 		script := args[0]
 		if err := L.DoFile(script); err != nil {
