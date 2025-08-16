@@ -1,8 +1,13 @@
 local ipc = require("std:ipc")
 
 -- servidor
-local server = ipc.server({ path = "/tmp/misocket.sock" })
+local server = ipc.server({ path = "/tmp/luna.sock" })
 print("Iniciando servidor IPC...")
+
+local function on_close(msg)
+	print(msg .. " Shutdown")
+end
+
 server:start(function(conn)
 	while true do
 		local data = conn:recv(1024)
@@ -13,4 +18,4 @@ server:start(function(conn)
 		conn:send("Echo: " .. data)
 	end
 	conn:close()
-end)
+end, on_close)
