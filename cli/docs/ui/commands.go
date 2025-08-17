@@ -34,6 +34,8 @@ func processCommand(m Model) Model {
 		m.Content = Manual.Reference.Std.Test
 	case "/reference/std/http", "/http", "/std/http":
 		m.Content = Manual.Reference.Std.Http
+	case "/reference/std/math", "/math", "/std/math":
+		m.Content = Manual.Reference.Std.Math
 	default:
 		content := Manual.Index
 		m.Content = "\u200B│ **Command not found:** `" + inputVal + "`\n\n" + content

@@ -26,6 +26,7 @@ type STD struct {
 	Sqlite string
 	Test   string
 	Http   string
+	Math   string
 }
 
 type Reference struct {
@@ -69,6 +70,7 @@ var Manual = ManualStruct{
 			Sqlite: luna.MustReadDocFile("reference/std/sqlite.md"),
 			Test:   luna.MustReadDocFile("reference/std/test.md"),
 			Http:   luna.MustReadDocFile("reference/std/http.md"),
+			Math:   luna.MustReadDocFile("reference/std/math.md"),
 		},
 	},
 }
