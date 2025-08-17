@@ -32,6 +32,8 @@ func processCommand(m Model) Model {
 		m.Content = Manual.Reference.Std.Sqlite
 	case "/reference/std/test", "/test", "/std/test":
 		m.Content = Manual.Reference.Std.Test
+	case "/reference/std/http", "/http", "/std/http":
+		m.Content = Manual.Reference.Std.Http
 	default:
 		content := Manual.Index
 		m.Content = "\u200B│ **Command not found:** `" + inputVal + "`\n\n" + content
