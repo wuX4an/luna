@@ -8,12 +8,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-//go:embed manual/index.txt
-var IndexContent string
-
-var (
-	docDir string
-)
+var docDir string
 
 var DocCmd = &cobra.Command{
 	Use:     "docs",

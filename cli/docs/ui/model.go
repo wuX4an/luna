@@ -1,7 +1,7 @@
 package ui
 
 import (
-	"luna/cli/docs/manual"
+	"luna"
 
 	"github.com/charmbracelet/bubbles/textinput"
 	"github.com/charmbracelet/bubbles/viewport"
@@ -25,7 +25,7 @@ func InitialModel() Model {
 	ti.Width = 40
 
 	// Carga el contenido de index.txt embebido por defecto
-	initialContent := manual.IndexContent
+	initialContent, _ := luna.ReadDocFile("index.md")
 
 	return Model{
 		TextInput:   ti,
