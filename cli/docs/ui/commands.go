@@ -28,6 +28,8 @@ func processCommand(m Model) Model {
 		m.Content = Manual.Reference.Std.Time
 	case "/reference/std/tablex", "/tablex", "/std/tablex":
 		m.Content = Manual.Reference.Std.Tablex
+	case "/reference/std/sqlite", "/sqlite", "/std/sqlite":
+		m.Content = Manual.Reference.Std.Sqlite
 	default:
 		content := Manual.Index
 		m.Content = "\u200B│ **Command not found:** `" + inputVal + "`\n\n" + content
