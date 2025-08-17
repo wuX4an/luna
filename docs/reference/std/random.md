@@ -28,6 +28,8 @@ local weights = { 50, 2, 50, 2 }
 print("Chosen item:", random.choice(items, weights))
 ```
 
+---
+
 ### `random.int(min: integer, max: integer, step: integer?): integer`
 
 Generates a random integer within a specified range and optional step.
@@ -46,6 +48,8 @@ local random = require("std:random")
 
 print(random.int(1, 10, 2)) -- random integer between 1 and 10 with step 2
 ```
+
+---
 
 ### `random.float(min: number, max: number, precision: integer?): number`
 
@@ -67,6 +71,8 @@ print(random.float(1, 5))         -- float between 1 and 5
 print(random.float(0, 1, 4))      -- float between 0 and 1 with 4 decimals
 print(random.float(10.5, 99.9, 0))  -- float between 10.5 and 99.9 as integer
 ```
+
+---
 
 ### `random.take(items: table, n: integer): table`
 
@@ -95,8 +101,12 @@ for i, v in ipairs(taken) do
 end
 ```
 
+---
+
 ## Notes:
 
 - `choice` respects the `weights` array if provided; otherwise, selection is uniform.
 - `int` and `float` ranges are inclusive.
 - `take` may return fewer items than requested if `n` > `#items`.
+
+---

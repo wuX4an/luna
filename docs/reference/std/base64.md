@@ -25,6 +25,8 @@ print(base64.encode("Hello Luna"))
 -- "SGVsbG8gTHVuYQ=="
 ```
 
+---
+
 ### `base64.decode(input: string): string`
 
 Decodes a Base64 string back into its original form.
@@ -42,3 +44,4 @@ local base64 = require("std:base64")
 print(base64.decode("Tm90Y2g="))
 -- "Notch"
 ```
+---

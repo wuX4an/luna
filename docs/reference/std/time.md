@@ -1,6 +1,6 @@
 # std:time
 
-The `std:time` module provides functions for working with timestamps, formatting dates and times, and controlling delays.  
+The `std:time` module provides functions for working with timestamps, formatting dates and times, and controlling delays.
 It is useful for logging, scheduling, time calculations, and formatting dates for display or storage.
 
 ---
@@ -23,6 +23,8 @@ local time = require("std:time")
 local now = time.now()
 print("Current timestamp:", now)
 ```
+
+---
 
 ### `time.format(format_string: string, timestamp: integer): string`
 
@@ -47,6 +49,8 @@ print(formatted)
 -- "Saturday, August 10, 2025"
 ```
 
+---
+
 ### `time.sleep(milliseconds: integer)`
 
 Pauses execution for a specified amount of time.
@@ -65,6 +69,8 @@ print("Sleeping for 1 second...")
 time.sleep(1000)
 print("Awake!")
 ```
+
+---
 
 ## Notes
 
@@ -95,3 +101,5 @@ print("Awake!")
 | `%T`  | 15:04:05      | Equivalent to `%H:%M:%S`           |
 | `%r`  | 03:04:05 PM   | 12-hour clock time                 |
 | `%R`  | 15:04         | 24-hour clock time without seconds |
+
+---

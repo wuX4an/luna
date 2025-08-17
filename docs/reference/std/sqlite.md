@@ -1,4 +1,4 @@
-# std\:sqlite
+# std:sqlite
 
 The `std:sqlite` module provides an easy-to-use interface to SQLite databases from Lua.
 It supports creating databases, executing SQL statements, performing transactions, and iterating over query results.
@@ -19,6 +19,8 @@ local db, err = sqlite.open(":memory:")
 assert(db, err)
 ```
 
+---
+
 ### `db:exec(sql: string): (ok, err)`
 
 Executes an SQL statement without returning rows (e.g., `CREATE`, `INSERT`, `UPDATE`).
@@ -34,6 +36,8 @@ db:exec([[
 ]])
 ```
 
+---
+
 ### `db:transaction(fn: function): (ok, err)`
 
 Executes multiple SQL statements atomically inside a transaction.
@@ -48,6 +52,8 @@ db:transaction(function(tx)
     tx:exec("INSERT INTO users (name) VALUES ('Luis')")
 end)
 ```
+
+---
 
 ### `db:query(sql: string): (rows, err)`
 
@@ -69,6 +75,8 @@ end
 rows:close()
 ```
 
+---
+
 ### `db:close()`
 
 Closes the database connection.
@@ -78,6 +86,8 @@ Closes the database connection.
 ```lua
 db:close()
 ```
+
+---
 
 ## Complete Example:
 
@@ -127,3 +137,4 @@ print("TOTAL USERS:", countRow.total)
 -- Close the database
 db:close()
 ```
+---

@@ -26,6 +26,8 @@ test.run("simple test", function()
 end)
 ```
 
+---
+
 ### `test(name: string, fn: function)`
 
 Shorthand inline test, equivalent to `test.run`.
@@ -38,6 +40,8 @@ test("inline test", function()
     return test.expect(42):to_equal(41)  -- Expect 42 to equal 41
 end)
 ```
+
+---
 
 ### `test.expect(value)`
 
@@ -52,6 +56,8 @@ Creates an expectation object to assert values.
 -- Direct expectation
 test.expect(2):to_equal(2)  -- This test passes
 ```
+
+---
 
 ### `test.describe(name: string, fn: function)`
 
@@ -75,6 +81,8 @@ test.describe("basic math", function()
 end)
 ```
 
+---
+
 ### `test.each(cases: table, fn: function)`
 
 Runs parameterized tests for each case in a table.
@@ -96,6 +104,8 @@ test.describe("Parameterized multiplication", function()
     end)
 end)
 ```
+
+---
 
 ## Complete Example
 
@@ -138,3 +148,4 @@ test.describe("Parameterized multiplication", function()
     end)
 end)
 ```
+---
