@@ -18,6 +18,7 @@ type CLI struct {
 type STD struct {
 	Index  string
 	Base64 string
+	Random string
 }
 
 type Reference struct {
@@ -55,6 +56,7 @@ var Manual = ManualStruct{
 		Std: STD{
 			Index:  luna.MustReadDocFile("reference/std/index.md"),
 			Base64: luna.MustReadDocFile("reference/std/base64.md"),
+			Random: luna.MustReadDocFile("reference/std/random.md"),
 		},
 	},
 }

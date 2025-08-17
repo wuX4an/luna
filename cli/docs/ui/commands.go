@@ -19,8 +19,11 @@ func processCommand(m Model) Model {
 		m.Content = Manual.Reference.Index
 	case "/reference/std", "/std":
 		m.Content = Manual.Reference.Std.Index
+	// REFERENCE/STD
 	case "/reference/std/base64", "/base64", "/std/base64":
 		m.Content = Manual.Reference.Std.Base64
+	case "/reference/std/random", "/random", "/std/random":
+		m.Content = Manual.Reference.Std.Random
 	default:
 		content := Manual.Index
 		m.Content = "\u200B│ **Command not found:** `" + inputVal + "`\n\n" + content
