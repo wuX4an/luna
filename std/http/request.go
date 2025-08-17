@@ -6,6 +6,7 @@ import (
 	"io"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 
 	lua "github.com/yuin/gopher-lua"
@@ -17,10 +18,11 @@ func Request(L *lua.LState) int {
 	rawurl := L.CheckString(2)
 	opts := L.OptTable(3, nil)
 
-	// Parámetros opcionales
+	// Optional parameters
 	headers := map[string]string{}
 	queryParams := map[string]string{}
 	timeout := 5000 * time.Millisecond
+	var bodyReader io.Reader = nil
 
 	if opts != nil {
 		// headers
@@ -30,6 +32,7 @@ func Request(L *lua.LState) int {
 				headers[k.String()] = v.String()
 			})
 		}
+
 		// query
 		if tbl := opts.RawGetString("query"); tbl.Type() == lua.LTTable {
 			tblQuery := tbl.(*lua.LTable)
@@ -37,44 +40,48 @@ func Request(L *lua.LState) int {
 				queryParams[k.String()] = v.String()
 			})
 		}
+
 		// timeout
 		if to := opts.RawGetString("timeout"); to.Type() == lua.LTNumber {
 			ms := time.Duration(lua.LVAsNumber(to))
 			timeout = ms * time.Millisecond
 		}
+
+		// body
+		if b := opts.RawGetString("body"); b.Type() == lua.LTString {
+			bodyReader = strings.NewReader(b.String())
+		}
 	}
 
-	// Parsear URL y añadir query params
+	// Parse URL and add query parameters
 	u, err := url.Parse(rawurl)
 	if err != nil {
 		L.Push(lua.LNil)
 		L.Push(lua.LString(fmt.Sprintf("invalid url: %v", err)))
 		return 2
 	}
-
 	q := u.Query()
 	for k, v := range queryParams {
 		q.Set(k, v)
 	}
 	u.RawQuery = q.Encode()
 
-	// Crear request
+	// Create request
 	ctx, cancel := context.WithTimeout(context.Background(), timeout)
 	defer cancel()
-
-	req, err := http.NewRequestWithContext(ctx, method, u.String(), nil)
+	req, err := http.NewRequestWithContext(ctx, method, u.String(), bodyReader)
 	if err != nil {
 		L.Push(lua.LNil)
 		L.Push(lua.LString(fmt.Sprintf("error creating request: %v", err)))
 		return 2
 	}
 
-	// headers
+	// Set headers
 	for k, v := range headers {
 		req.Header.Set(k, v)
 	}
 
-	// Hacer request
+	// Execute request
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -84,7 +91,7 @@ func Request(L *lua.LState) int {
 	}
 	defer resp.Body.Close()
 
-	// Leer body
+	// Read body
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		L.Push(lua.LNil)
@@ -92,11 +99,10 @@ func Request(L *lua.LState) int {
 		return 2
 	}
 
-	// Crear tabla resultado
+	// Create result table
 	resTbl := L.NewTable()
 	resTbl.RawSetString("status", lua.LNumber(resp.StatusCode))
 	resTbl.RawSetString("body", lua.LString(string(body)))
-
 	L.Push(resTbl)
 	return 1
 }
