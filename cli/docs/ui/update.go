@@ -4,6 +4,8 @@ import (
 	// Importa tu paquete docs
 	"strings"
 
+	_ "embed"
+
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/glamour"
@@ -85,10 +87,22 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, tea.Batch(cmds...)
 }
 
+//go:embed theme.json
+var themeJSON []byte
+
 func renderMarkdown(input string) string {
-	out, err := glamour.Render(input, "dark") // puedes usar "light", "dracula", etc
+	r, err := glamour.NewTermRenderer(
+		glamour.WithStylesFromJSONBytes(themeJSON), // usamos directamente los bytes embebidos
+		glamour.WithWordWrap(80),
+	)
 	if err != nil {
-		return input // fallback a texto plano si falla
+		return input
 	}
+
+	out, err := r.Render(input)
+	if err != nil {
+		return input
+	}
+
 	return strings.TrimPrefix(out, "\n")
 }

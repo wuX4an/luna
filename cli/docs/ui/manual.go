@@ -43,7 +43,7 @@ var Manual = ManualStruct{
 		Index: luna.MustReadDocFile("reference/index.md"),
 		CLI: CLI{
 			Index:    luna.MustReadDocFile("reference/cli/index.md"),
-			Commands: luna.MustReadDocFile("reference/cli/command.md"),
+			Commands: luna.MustReadDocFile("reference/cli/commands.md"),
 			Flags:    luna.MustReadDocFile("reference/cli/flags.md"),
 		},
 		Lua: luna.MustReadDocFile("reference/lua/index.md"),
