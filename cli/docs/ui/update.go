@@ -93,7 +93,7 @@ var themeJSON []byte
 func renderMarkdown(input string) string {
 	r, err := glamour.NewTermRenderer(
 		glamour.WithStylesFromJSONBytes(themeJSON), // usamos directamente los bytes embebidos
-		glamour.WithWordWrap(80),
+		glamour.WithWordWrap(90),
 	)
 	if err != nil {
 		return input

@@ -26,7 +26,10 @@
     "bold": true
   },
   "h2": {
-    "prefix": "┄ ",
+    "prefix": " ",
+    "suffix": " ",
+    "color": "231",
+    "background_color": "160",
     "bold": true
   },
   "h3": {
@@ -58,7 +61,7 @@
   },
   "hr": {
     "color": "240",
-    "format": "\n--------\n"
+    "format": "\n--------------------------------------------------------\n"
   },
   "item": {
     "block_prefix": "• "
