@@ -2,6 +2,7 @@ package std
 
 import (
 	"luna/std/base64"
+	"luna/std/env"
 	"luna/std/http"
 	"luna/std/ipc"
 	"luna/std/math"
@@ -24,4 +25,5 @@ func RegisterAll(L *lua.LState) {
 	L.PreloadModule("std:math", math.Loader)
 	L.PreloadModule("std:ipc", ipc.Loader)
 	L.PreloadModule("std:base64", base64.Loader)
+	L.PreloadModule("std:env", env.Loader)
 }
