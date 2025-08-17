@@ -15,11 +15,16 @@ type CLI struct {
 	Flags    string
 }
 
+type STD struct {
+	Index  string
+	Base64 string
+}
+
 type Reference struct {
 	Index string
 	CLI   CLI
 	Lua   string
-	Std   string
+	Std   STD
 }
 
 // ManualStruct contiene todo el contenido embebido
@@ -47,6 +52,9 @@ var Manual = ManualStruct{
 			Flags:    luna.MustReadDocFile("reference/cli/flags.md"),
 		},
 		Lua: luna.MustReadDocFile("reference/lua/index.md"),
-		Std: luna.MustReadDocFile("reference/std/index.md"),
+		Std: STD{
+			Index:  luna.MustReadDocFile("reference/std/index.md"),
+			Base64: luna.MustReadDocFile("reference/std/base64.md"),
+		},
 	},
 }
