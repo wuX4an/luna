@@ -24,6 +24,7 @@ type STD struct {
 	Time   string
 	Tablex string
 	Sqlite string
+	Test   string
 }
 
 type Reference struct {
@@ -65,6 +66,7 @@ var Manual = ManualStruct{
 			Time:   luna.MustReadDocFile("reference/std/time.md"),
 			Tablex: luna.MustReadDocFile("reference/std/tablex.md"),
 			Sqlite: luna.MustReadDocFile("reference/std/sqlite.md"),
+			Test:   luna.MustReadDocFile("reference/std/test.md"),
 		},
 	},
 }
