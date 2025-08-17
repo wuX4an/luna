@@ -1,6 +1,8 @@
 package ui
 
-import "luna"
+import (
+	"luna"
+)
 
 // Subestructuras
 type Concepts struct {
@@ -20,6 +22,7 @@ type STD struct {
 	Base64 string
 	Random string
 	Time   string
+	Tablex string
 }
 
 type Reference struct {
@@ -59,6 +62,7 @@ var Manual = ManualStruct{
 			Base64: luna.MustReadDocFile("reference/std/base64.md"),
 			Random: luna.MustReadDocFile("reference/std/random.md"),
 			Time:   luna.MustReadDocFile("reference/std/time.md"),
+			Tablex: luna.MustReadDocFile("reference/std/tablex.md"),
 		},
 	},
 }
