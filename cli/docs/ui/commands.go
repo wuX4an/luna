@@ -13,12 +13,17 @@ func processCommand(m Model) Model {
 		m.Content = Manual.Index
 	// USAGE
 	case "/usage":
-		m.Content = Manual.Usage
+		m.Content = Manual.Usage.Index
+	case "/usage/start", "u/start":
+		m.Content = Manual.Usage.Start
 	// REFERENCE
 	case "/reference", "/r":
 		m.Content = Manual.Reference.Index
 	case "/reference/std", "/std":
 		m.Content = Manual.Reference.Std.Index
+	// REFERENCE/CLI
+	case "/reference/cli", "/cli":
+		m.Content = Manual.Reference.Cli
 	// REFERENCE/STD
 	case "/reference/std/base64", "/base64", "/std/base64":
 		m.Content = Manual.Reference.Std.Base64

@@ -1,13 +1,28 @@
-## Standard Library Reference
+# Standard Library
 
-The following modules are available in the Luna standard library:
+Luna's standard library provides a rich set of modules to simplify everyday tasks, from file system access to cryptography, HTTP requests, and mathematical operations.
 
-- [base64](/reference/std/base64) — Encoding and decoding data in Base64 format.
-- [http](/reference/std/http) — HTTP client and server utilities.
-- [ipc](/reference/std/ipc) — Inter-process communication helpers.
-- [math](/reference/std/math) — Mathematical operations and constants.
-- [random](/reference/std/random) — Random number generation utilities.
-- [sqlite](/reference/std/sqlite) — SQLite database access.
-- [tablex](/reference/std/tablex) — Extended table manipulation functions.
-- [test](/reference/std/test) — Testing framework utilities.
-- [time](/reference/std/time) — Working with dates, times, and durations.
+The modules are designed to be **self-contained**, **portable**, and **easy to use**, enabling you to build scripts and applications without external dependencies.
+
+---
+
+## Modules Overview
+
+Luna's standard library includes:
+
+- **base64** — Encode and decode Base64 strings.
+- **crypto** — Hashing, HMAC, UUIDs, and secure random bytes.
+- **env** — Load and manage environment variables from `.env` files.
+- **http** — HTTP client and server utilities.
+- **math** — Extended mathematical functions.
+- **random** — Random numbers, shuffling, and selections.
+- **sqlite** — Embedded SQLite database access.
+- **tablex** — Extended table utilities.
+- **test** — Simple unit testing framework.
+- **time** — Date, time, and sleep utilities.
+
+---
+
+> Navigation: /reference/std/`<module-name>`
+
+---
