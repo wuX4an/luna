@@ -1,13 +1,9 @@
 package build
 
 import (
-	"encoding/binary"
-	"errors"
 	"fmt"
-	"io"
-	"luna"
 	"os"
-	"strings"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 )
@@ -38,7 +34,6 @@ var buildExamples = `  luna build main.lua
   luna build . --target=linux/arm64`
 
 // BuildCmd es el comando Cobra para la funcionalidad de construcción.
-// Se exporta (primera letra en mayúscula) para que pueda ser accedido desde otros paquetes.
 var BuildCmd = &cobra.Command{
 	Use:     "build [FILE]",
 	Short:   "Compile the script into a self-contained executable",
@@ -52,114 +47,67 @@ var BuildCmd = &cobra.Command{
 			}
 			return nil
 		}
-		// Analiza el objetivo de construcción.
-		var buildOS, buildArch string
-		if buildTarget != "" {
-			parts := strings.Split(buildTarget, "/")
-			if len(parts) != 2 {
-				return errors.New("invalid target format. Use --target=os/arch (e.g. linux/amd64)")
-			}
-			buildOS = parts[0]
-			buildArch = parts[1]
-		} else {
-			// Valores predeterminados si no se especifica --target.
-			buildOS = "linux"
-			buildArch = "amd64"
-		}
 
-		// Construye la clave para el binario de tiempo de ejecución incrustado.
-		key := fmt.Sprintf("build/runtimes/runtime_%s_%s", buildOS, buildArch)
-		runtimeBinary, err := luna.EmbeddedRuntimes.ReadFile(key)
-		if err != nil {
-			return fmt.Errorf("no embedded runtime for target %s/%s: %w", buildOS, buildArch, err)
-		}
-
-		// Determina el archivo o directorio a empaquetar.
+		// 1. Determinar archivo o directorio a empaquetar
 		file := "."
+		if len(args) == 0 {
+			file = "."
+		}
 		if len(args) > 0 {
 			file = args[0]
 		}
 
-		fmt.Printf("Building %q for target=%s/%s\n", file, buildOS, buildArch)
-
-		// 1. Crea un archivo tar.gz con el proyecto Lua.
-		tmpTar := "bundle.tar.gz"
-		if err := createTarGz(file, tmpTar); err != nil {
-			return fmt.Errorf("failed to create tar.gz: %w", err)
+		var entryFile string
+		// Si es un directorio, intentar leer Luna.toml
+		info, err := os.Stat(file)
+		if err != nil {
+			return err
 		}
-		// Asegúrate de limpiar el archivo temporal al finalizar.
-		defer os.Remove(tmpTar)
+		if info.IsDir() {
+			cfg, err := loadLunaToml(file)
+			if err != nil {
+				return err
+			}
 
-		// 2. Crea el ejecutable final.
-		var finalExe string
-		if buildOutput != "" {
-			finalExe = buildOutput
+			// Entry
+			entryFile = cfg.Build.Source
+			if !filepath.IsAbs(entryFile) {
+				entryFile = filepath.Join(file, entryFile)
+			}
+
+			// Target
+			if buildTarget == "" && cfg.Build.Target != "" {
+				buildTarget = cfg.Build.Target
+			}
+
+			// Output
+			if buildOutput == "" && cfg.Build.Output != "" {
+				buildOutput = cfg.Build.Output
+			}
 		} else {
-			finalExe = fmt.Sprintf("main_%s_%s", buildOS, buildArch)
-			if buildOS == "windows" {
-				finalExe += ".exe"
-			}
+			// Es un archivo directo
+			entryFile = file
 		}
 
-		// Verifica que la ruta no sea un directorio
-		if info, err := os.Stat(finalExe); err == nil && info.IsDir() {
-			return fmt.Errorf("output path %q is a directory, not a file", finalExe)
-		}
-
-		outf, err := os.Create(finalExe)
-		if err != nil {
-			return err
-		}
-		defer outf.Close() // Asegúrate de cerrar el archivo de salida.
-
-		// Escribe el binario de tiempo de ejecución en el ejecutable final.
-		runtimeSize, err := outf.Write(runtimeBinary)
+		// 2. Parse target
+		buildOS, buildArch, err := parseTarget(buildTarget)
 		if err != nil {
 			return err
 		}
 
-		// Abre el archivo tar.gz y cópialo al ejecutable final.
-		tarFile, err := os.Open(tmpTar)
-		if err != nil {
-			return err
-		}
-		defer tarFile.Close() // Asegúrate de cerrar el archivo tar.gz.
-
-		_, err = io.Copy(outf, tarFile)
+		// 3. Leer runtime embebido
+		runtimeBinary, err := loadRuntime(buildOS, buildArch)
 		if err != nil {
 			return err
 		}
 
-		// Escribe el marcador al final del ejecutable.
-		_, err = outf.Write([]byte(marker))
-		if err != nil {
-			return err
-		}
-
-		// Escribe el offset del inicio del paquete de la aplicación.
-		offsetBuf := make([]byte, 8)
-		binary.LittleEndian.PutUint64(offsetBuf, uint64(runtimeSize))
-		_, err = outf.Write(offsetBuf)
-		if err != nil {
-			return err
-		}
-
-		fmt.Printf("Built executable: %s\n", finalExe)
-
-		// Marca como ejecutable (solo en sistemas tipo Unix)
-		if buildOS != "windows" {
-			if err := os.Chmod(finalExe, 0755); err != nil {
-				return fmt.Errorf("failed to set executable permissions: %w", err)
-			}
-		}
-		return nil
+		// 4. Ejecutar pipeline de build
+		return runBuildPipeline(entryFile, buildOS, buildArch, runtimeBinary, buildOutput)
 	},
 }
 
 // init se ejecuta cuando se carga el paquete 'build'.
 func init() {
-	// Añade la bandera --target al comando BuildCmd.
-	// NOTA: La adición de BuildCmd al comando principal Cmd se hará en cli.go.
 	BuildCmd.Flags().StringVarP(&buildTarget, "target", "t", "", "Target platform in the form os/arch (linux/amd64)")
 	BuildCmd.Flags().BoolVarP(&buildList, "list", "l", false, "List available platforms")
 	BuildCmd.Flags().StringVarP(&buildOutput, "output", "o", "", "Output file name (optional)")
