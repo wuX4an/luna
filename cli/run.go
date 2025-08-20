@@ -8,7 +8,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/pelletier/go-toml/v2"
 	"github.com/spf13/cobra"
 	lua "github.com/yuin/gopher-lua"
 )
@@ -18,74 +17,51 @@ var runExamples = `  luna run main.lua
 
 var runCmd = &cobra.Command{
 	Use:     "run [FILE|DIR]",
-	Short:   "Run a lua program or project",
+	Short:   "Run a Lua script or project",
 	Example: runExamples,
 	Args:    cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cmd.SilenceUsage = true
 		cmd.SilenceErrors = true
 
-		var scriptPath string
-		var projectDir string
-
-		// Si no hay argumento, asumimos directorio actual
-		if len(args) == 0 {
-			args = append(args, ".")
+		// Default to current directory
+		arg := "."
+		if len(args) > 0 {
+			arg = args[0]
 		}
-		arg := args[0]
 
 		info, err := os.Stat(arg)
 		if err != nil {
 			return fmt.Errorf("path does not exist: %s", arg)
 		}
 
+		var conf *LunaConfig
+		var scriptPath string
+		var projectDir string
+
 		if info.IsDir() {
-			projectDir = arg
-
-			// Buscar Luna.toml para entry
+			// Load Luna.toml
 			configPath := filepath.Join(arg, "Luna.toml")
-			if _, err := os.Stat(configPath); os.IsNotExist(err) {
-				return fmt.Errorf("could not find Luna.toml in %s", arg)
-			}
-
-			configData, err := os.ReadFile(configPath)
+			conf, err = LoadConfig(configPath)
 			if err != nil {
-				return fmt.Errorf("could not read Luna.toml: %w", err)
-			}
-
-			var conf struct {
-				Build struct {
-					Entry  string `toml:"entry"`  // archivo principal
-					Source string `toml:"source"` // directorio de módulos
-				} `toml:"build"`
-			}
-			if err := toml.Unmarshal(configData, &conf); err != nil {
-				return fmt.Errorf("invalid Luna.toml: %w", err)
-			}
-
-			if conf.Build.Entry == "" {
-				return fmt.Errorf("Luna.toml missing [build].entry")
-			}
-			if conf.Build.Source == "" {
-				return fmt.Errorf("Luna.toml missing [build].source")
+				return err
 			}
 
 			scriptPath = filepath.Join(arg, conf.Build.Source, conf.Build.Entry)
 			projectDir = filepath.Join(arg, conf.Build.Source)
-
 		} else if filepath.Ext(arg) == ".lua" {
-			// Archivo individual
+			// Single Lua file
 			scriptPath = arg
 			projectDir = filepath.Dir(arg)
 		} else {
 			return fmt.Errorf("argument must be a .lua file or a project directory with Luna.toml")
 		}
 
-		// Inicializar VM Lua
+		// Initialize Lua VM
 		L := luavm.NewLuaVM()
 		defer L.Close()
 
-		// Cargar todos los módulos en memoria
+		// Load all Lua modules in memory
 		modules := map[string]string{}
 		err = filepath.WalkDir(projectDir, func(path string, d fs.DirEntry, err error) error {
 			if err != nil || d.IsDir() {
@@ -93,28 +69,21 @@ var runCmd = &cobra.Command{
 			}
 			if filepath.Ext(path) == ".lua" {
 				rel, _ := filepath.Rel(projectDir, path)
-				rel = filepath.ToSlash(rel) // unix-style: "hello.lua" o "foo/bar.lua"
+				rel = filepath.ToSlash(rel)
 				base := strings.TrimSuffix(rel, ".lua")
-
-				// Nombre con ":" (tu estilo)
 				modName := strings.ReplaceAll(base, "/", ":")
-
 				data, _ := os.ReadFile(path)
-
-				// Guardar tanto con ":" como con "." como alias
 				modules[modName] = string(data)
 				modules[strings.ReplaceAll(base, "/", ".")] = string(data)
 			}
 			return nil
 		})
 
-		// Redefinir require para buscar en memoria
+		// Override require to load from memory first
 		originRequire := L.GetGlobal("require")
-		// --- Sobrescribir require ---
 		L.SetGlobal("require", L.NewFunction(func(L *lua.LState) int {
 			modName := L.ToString(1)
 			if code, ok := modules[modName]; ok {
-				// Cargar desde bundle
 				fn, err := L.LoadString(code)
 				if err != nil {
 					L.RaiseError("error compiling module %s: %v", modName, err)
@@ -127,8 +96,7 @@ var runCmd = &cobra.Command{
 				}
 				return 1
 			}
-
-			// Fallback: usar el require original
+			// fallback
 			L.Push(originRequire)
 			L.Push(lua.LString(modName))
 			if err := L.PCall(1, 1, nil); err != nil {
@@ -138,7 +106,7 @@ var runCmd = &cobra.Command{
 			return 1
 		}))
 
-		// Ejecutar script principal
+		// Run main script
 		if err := L.DoFile(scriptPath); err != nil {
 			return fmt.Errorf("error running script: %w", err)
 		}
