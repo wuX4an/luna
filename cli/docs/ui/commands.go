@@ -24,6 +24,9 @@ func processCommand(m Model) Model {
 	// REFERENCE/CLI
 	case "/reference/cli", "/cli":
 		m.Content = Manual.Reference.Cli
+	// REFERENCE/CONFIG
+	case "/reference/config", "/config":
+		m.Content = Manual.Reference.Config
 	// REFERENCE/STD
 	case "/reference/std/base64", "/base64", "/std/base64":
 		m.Content = Manual.Reference.Std.Base64

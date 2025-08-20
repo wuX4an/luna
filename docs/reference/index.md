@@ -33,3 +33,13 @@ These modules provide utilities for cryptography, base64, time/date, and more.
 - Modules: `std:crypto`, `std:base64`, `std:time`, ...
 
 ---
+
+## Config
+
+Luna projects use a configuration file called `Luna.toml` to define project metadata, build instructions, and reusable tasks.
+This file controls how Luna runs, builds, and manages your project.
+
+- [Config Overview](/reference/config) — full documentation of `Luna.toml` fields and usage examples
+- **File:** `Luna.toml` (TOML format)
+- **Sections:** `[package]`, `[build]`, `[tasks]`
+- **Purpose:** specify project info, build source, entry point, output, and custom tasks

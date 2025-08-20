@@ -25,10 +25,11 @@ type STD struct {
 }
 
 type Reference struct {
-	Index string
-	Cli   string
-	Lua   string
-	Std   STD
+	Index  string
+	Cli    string
+	Lua    string
+	Config string
+	Std    STD
 }
 type Usage struct {
 	Index string
@@ -55,9 +56,10 @@ var Manual = ManualStruct{
 		Start: luna.MustReadDocFile("usage/start.md"),
 	},
 	Reference: Reference{
-		Index: luna.MustReadDocFile("reference/index.md"),
-		Cli:   luna.MustReadDocFile("reference/cli/index.md"),
-		Lua:   luna.MustReadDocFile("reference/lua/index.md"),
+		Index:  luna.MustReadDocFile("reference/index.md"),
+		Cli:    luna.MustReadDocFile("reference/cli/index.md"),
+		Lua:    luna.MustReadDocFile("reference/lua/index.md"),
+		Config: luna.MustReadDocFile("reference/config/index.md"),
 		Std: STD{
 			Index:  luna.MustReadDocFile("reference/std/index.md"),
 			Base64: luna.MustReadDocFile("reference/std/base64.md"),

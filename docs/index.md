@@ -18,5 +18,6 @@ It comes with a CLI, standard library, and tools to run and build scripts.
   - [Command Line](/reference/cli)
   - [Standard library](/reference/std)
   - [Lua](/reference/lua)
+  - [Config](/reference/config)
 
 > Use the sidebar or navigate with `/` to search docs directly.
