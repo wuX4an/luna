@@ -30,21 +30,24 @@ func main() {
 }
 
 func run() error {
+	// Abrir ejecutable actual
 	f, err := os.Open(os.Args[0])
 	if err != nil {
 		return err
 	}
 	defer f.Close()
 
+	// Buscar offset del tar.gz embebido
 	offset, err := findTarOffset(f)
 	if err != nil {
 		return err
 	}
-	_, err = f.Seek(offset, io.SeekStart)
-	if err != nil {
+
+	if _, err := f.Seek(offset, io.SeekStart); err != nil {
 		return err
 	}
 
+	// Abrir gzip
 	gzr, err := gzip.NewReader(f)
 	if err != nil {
 		return err
@@ -53,7 +56,7 @@ func run() error {
 
 	tr := tar.NewReader(gzr)
 
-	// --- Guardar todos los módulos en memoria ---
+	// Guardar todos los módulos en memoria
 	modules := map[string]string{}
 	var mainLuaContent string
 
@@ -72,10 +75,13 @@ func run() error {
 				return err
 			}
 
-			name := strings.TrimSuffix(filepath.Base(hdr.Name), ".lua")
-			modules[name] = buf.String()
+			// Convertir path a formato de módulo: foo/foo.lua → foo.foo
+			modName := strings.TrimSuffix(hdr.Name, ".lua")
+			modName = strings.ReplaceAll(modName, string(os.PathSeparator), ".")
 
-			if hdr.Name == "main.lua" {
+			modules[modName] = buf.String()
+
+			if filepath.Base(hdr.Name) == "main.lua" {
 				mainLuaContent = buf.String()
 			}
 		}
@@ -85,16 +91,16 @@ func run() error {
 		return errors.New("main.lua not found in bundle")
 	}
 
-	// --- Inicializar VM ---
+	// Inicializar VM
 	L := luavm.NewLuaVM()
 	defer L.Close()
 
 	originRequire := L.GetGlobal("require")
-	// --- Sobrescribir require ---
+
+	// Sobrescribir require
 	L.SetGlobal("require", L.NewFunction(func(L *lua.LState) int {
 		modName := L.ToString(1)
 		if code, ok := modules[modName]; ok {
-			// Cargar desde bundle
 			fn, err := L.LoadString(code)
 			if err != nil {
 				L.RaiseError("error compiling module %s: %v", modName, err)
@@ -108,7 +114,7 @@ func run() error {
 			return 1
 		}
 
-		// Fallback: usar el require original
+		// Fallback: usar require original
 		L.Push(originRequire)
 		L.Push(lua.LString(modName))
 		if err := L.PCall(1, 1, nil); err != nil {
@@ -118,7 +124,7 @@ func run() error {
 		return 1
 	}))
 
-	// --- Ejecutar main.lua ---
+	// Ejecutar main.lua
 	if err := L.DoString(mainLuaContent); err != nil {
 		return fmt.Errorf("error running main.lua: %w", err)
 	}
@@ -136,8 +142,7 @@ func findTarOffset(f *os.File) (int64, error) {
 		return 0, errors.New("file too small to contain marker")
 	}
 	buf := make([]byte, markerSize+offsetBytes)
-	_, err = f.ReadAt(buf, fileSize-int64(markerSize+offsetBytes))
-	if err != nil {
+	if _, err := f.ReadAt(buf, fileSize-int64(markerSize+offsetBytes)); err != nil {
 		return 0, err
 	}
 	if string(buf[:markerSize]) != marker {
