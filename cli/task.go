@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"luna/src/config"
 	"luna/src/luavm"
 	"os"
 	"path/filepath"
@@ -17,7 +18,7 @@ var taskCmd = &cobra.Command{
   luna task run         # run the "run" task`,
 	Args: cobra.MaximumNArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
-		conf, err := LoadConfig("Luna.toml")
+		conf, err := config.LoadConfig("Luna.toml")
 		if err != nil {
 			return err
 		}
@@ -41,7 +42,7 @@ var taskCmd = &cobra.Command{
 	},
 }
 
-func runTask(name string, conf *LunaConfig, visited map[string]bool) error {
+func runTask(name string, conf *config.LunaConfig, visited map[string]bool) error {
 	if visited[name] {
 		return nil // ya corrido
 	}

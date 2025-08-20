@@ -3,6 +3,7 @@ package cli
 import (
 	"fmt"
 	"io/fs"
+	"luna/src/config"
 	"luna/src/luavm"
 	"os"
 	"path/filepath"
@@ -35,14 +36,14 @@ var runCmd = &cobra.Command{
 			return fmt.Errorf("path does not exist: %s", arg)
 		}
 
-		var conf *LunaConfig
+		var conf *config.LunaConfig
 		var scriptPath string
 		var projectDir string
 
 		if info.IsDir() {
 			// Load Luna.toml
 			configPath := filepath.Join(arg, "Luna.toml")
-			conf, err = LoadConfig(configPath)
+			conf, err = config.LoadConfig(configPath)
 			if err != nil {
 				return err
 			}
