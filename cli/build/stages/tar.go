@@ -1,4 +1,4 @@
-package build
+package stages
 
 import (
 	"archive/tar"
@@ -7,6 +7,11 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+)
+
+const (
+	// marker es una cadena utilizada para identificar el inicio del paquete de la aplicación dentro del ejecutable.
+	marker = "LUNA_BUNDLE"
 )
 
 // createTarGz crea un archivo .tar.gz a partir de un directorio o archivo de origen.
@@ -103,7 +108,7 @@ func createTarGz(src, dest string) error {
 		}
 		if n != hdr.Size {
 			return fmt.Errorf(
-				"error de tamaño de archivo para %s: se copiaron %d bytes, pero el encabezado esperaba %d bytes. Esto podría indicar que el archivo fue modificado durante la operación.",
+				"error de tamaño de archivo para %s: se copiaron %d bytes, pero el encabezado esperaba %d bytes. Esto podría indicar que el archivo fue modificado durante la operación",
 				file, n, hdr.Size,
 			)
 		}

@@ -2,6 +2,8 @@ package build
 
 import (
 	"fmt"
+	"luna/cli/build/stages"
+	"luna/src/config"
 	"os"
 	"path/filepath"
 
@@ -23,11 +25,6 @@ var supportedTargets = []string{
 	"darwin/arm64",
 }
 
-const (
-	// marker es una cadena utilizada para identificar el inicio del paquete de la aplicación dentro del ejecutable.
-	marker = "LUNA_BUNDLE"
-)
-
 // buildExamples proporciona ejemplos de uso para el comando 'build'.
 var buildExamples = `  luna build main.lua
   luna build .
@@ -35,10 +32,12 @@ var buildExamples = `  luna build main.lua
 
 // BuildCmd es el comando Cobra para la funcionalidad de construcción.
 var BuildCmd = &cobra.Command{
-	Use:     "build [FILE]",
-	Short:   "Compile the script into a self-contained executable",
-	Example: buildExamples,
-	Args:    cobra.MaximumNArgs(1),
+	Use:           "build [FILE]",
+	Short:         "Compile the script into a self-contained executable",
+	Example:       buildExamples,
+	Args:          cobra.MaximumNArgs(1),
+	SilenceUsage:  true, // No help on errors
+	SilenceErrors: true, // No duplicate errors
 	RunE: func(cmd *cobra.Command, args []string) error {
 		if buildList {
 			fmt.Println("Supported targets:")
@@ -64,7 +63,8 @@ var BuildCmd = &cobra.Command{
 			return err
 		}
 		if info.IsDir() {
-			cfg, err := loadLunaToml(file)
+			configPath := filepath.Join("Luna.toml")
+			cfg, err := config.LoadConfig(configPath)
 			if err != nil {
 				return err
 			}
@@ -90,19 +90,19 @@ var BuildCmd = &cobra.Command{
 		}
 
 		// 2. Parse target
-		buildOS, buildArch, err := parseTarget(buildTarget)
+		buildOS, buildArch, err := stages.ParseTarget(buildTarget)
 		if err != nil {
 			return err
 		}
 
 		// 3. Leer runtime embebido
-		runtimeBinary, err := loadRuntime(buildOS, buildArch)
+		runtimeBinary, err := stages.LoadRuntime(buildOS, buildArch)
 		if err != nil {
 			return err
 		}
 
 		// 4. Ejecutar pipeline de build
-		return runBuildPipeline(entryFile, buildOS, buildArch, runtimeBinary, buildOutput)
+		return stages.RunBuildPipeline(entryFile, buildOS, buildArch, runtimeBinary, buildOutput)
 	},
 }
 
