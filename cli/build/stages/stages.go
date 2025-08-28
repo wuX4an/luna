@@ -37,33 +37,64 @@ func LoadRuntime(buildOS, buildArch string) ([]byte, error) {
 }
 
 func copyModules(modulePath, dstRoot string) error {
-	// quitar prefijo "src/" si existe
-	relPath := strings.TrimPrefix(modulePath, "src/")
-	dstPath := filepath.Join(dstRoot, relPath)
-
-	// crear directorio padre si no existe
-	if err := os.MkdirAll(filepath.Dir(dstPath), 0o755); err != nil {
-		return fmt.Errorf("failed to create dir %s: %w", filepath.Dir(dstPath), err)
-	}
-
-	// leer contenido
 	data, err := os.ReadFile(modulePath)
 	if err != nil {
 		return fmt.Errorf("failed to read %s: %w", modulePath, err)
 	}
 
-	// eliminar comentarios de línea que comienzan con --
 	lines := strings.Split(string(data), "\n")
 	var cleaned []string
+
+	skipBlock := false
+	funcLevel := 0
+
 	for _, line := range lines {
 		trim := strings.TrimSpace(line)
+
+		// Saltar bloques de tests
+		if skipBlock {
+			if strings.Contains(trim, "function") {
+				funcLevel++
+			}
+			if strings.Contains(trim, "end") {
+				funcLevel--
+				if funcLevel <= 0 {
+					skipBlock = false
+				}
+			}
+			continue
+		}
+
+		// Detectar inicio del bloque de tests
+		if strings.HasPrefix(trim, "table.insert(__TESTS__") {
+			skipBlock = true
+			funcLevel = 1
+			continue
+		}
+
+		// Eliminar líneas que requieren std:test
+		if strings.Contains(trim, `require("std:test")`) {
+			continue
+		}
+
+		// Eliminar líneas que contienen __TESTS__
+		if strings.Contains(trim, "__TESTS__ or {}") {
+			continue
+		}
+
+		// Ignorar comentarios
 		if strings.HasPrefix(trim, "--") {
 			continue
 		}
+
 		cleaned = append(cleaned, line)
 	}
 
-	// escribir archivo limpio
+	dstPath := filepath.Join(dstRoot, strings.TrimPrefix(modulePath, "src/"))
+	if err := os.MkdirAll(filepath.Dir(dstPath), 0o755); err != nil {
+		return fmt.Errorf("failed to create dir %s: %w", filepath.Dir(dstPath), err)
+	}
+
 	cleanData := strings.Join(cleaned, "\n")
 	if err := os.WriteFile(dstPath, []byte(cleanData), 0o644); err != nil {
 		return fmt.Errorf("failed to write %s: %w", dstPath, err)
