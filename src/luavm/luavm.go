@@ -7,15 +7,7 @@ import (
 )
 
 func NewLuaVM() *lua.LState {
-	L := lua.NewState(lua.Options{
-		SkipOpenLibs: true,
-	})
-	// Registrar cierre en quien use esta función
-	// Pero mejor que la llame quien la use (defer L.Close())
-
-	lua.OpenBase(L)
-	lua.OpenPackage(L)
-	lua.OpenString(L)
+	L := lua.NewState()
 
 	std.RegisterAll(L)
 
