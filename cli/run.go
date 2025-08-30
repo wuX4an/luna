@@ -9,6 +9,8 @@ import (
 	"path/filepath"
 	"strings"
 
+	handler "luna/src/error"
+
 	"github.com/spf13/cobra"
 	lua "github.com/yuin/gopher-lua"
 )
@@ -85,31 +87,42 @@ var runCmd = &cobra.Command{
 		L.SetGlobal("require", L.NewFunction(func(L *lua.LState) int {
 			modName := L.ToString(1)
 			if code, ok := modules[modName]; ok {
+				modPath := filepath.Join(projectDir, strings.ReplaceAll(modName, ".", string(os.PathSeparator))+".lua")
+
 				fn, err := L.LoadString(code)
 				if err != nil {
-					L.RaiseError("error compiling module %s: %v", modName, err)
+					// Pasar: mainPath, error, modName
+
+					pretty := handler.PrettyLuaError(modPath, err, modName)
+					L.RaiseError("%s", pretty)
 					return 0
 				}
+
 				L.Push(fn)
 				if err := L.PCall(0, 1, nil); err != nil {
-					L.RaiseError("error running module %s: %v", modName, err)
+					// Solo pasar el error ya formateado, NO formatear de nuevo
+					L.RaiseError("%s", err.Error())
 					return 0
 				}
+
 				return 1
 			}
-			// fallback
+
+			// fallback al require original
 			L.Push(originRequire)
 			L.Push(lua.LString(modName))
 			if err := L.PCall(1, 1, nil); err != nil {
 				L.RaiseError("fallback require failed for %s: %v", modName, err)
 				return 0
 			}
-			return 1
-		}))
 
-		// Run main script
+			return 1
+		})) // Run main script
+
 		if err := L.DoFile(scriptPath); err != nil {
-			return fmt.Errorf("error running script: %w", err)
+			// Usar PrettyLuaError para el archivo principal también
+			pretty := handler.PrettyLuaError(scriptPath, err, "") // modName vacío para el entry
+			return fmt.Errorf("%s", pretty)
 		}
 
 		return nil
