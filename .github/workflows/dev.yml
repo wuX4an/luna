@@ -1,0 +1,40 @@
+name: Dev Server
+
+jobs:
+  dev:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # Setup Bun
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      # Cache Bun dependencies
+      - name: Cache Bun
+        uses: actions/cache@v3
+        with:
+          path: |
+            deploy/node_modules
+            deploy/.bun
+          key: ${{ runner.os }}-bun-${{ hashFiles('deploy/package.json') }}
+          restore-keys: |
+            ${{ runner.os }}-bun-
+
+      - name: Prepare test content
+        run: |
+          mkdir -p deploy
+          cp -r website/. deploy/ || true
+          cp -r docs/ deploy/
+
+      - name: Install dependencies
+        run: |
+          cd deploy
+          bun install
+
+      - name: Start HTTP server
+        run: |
+          cd deploy
+          bun run start
