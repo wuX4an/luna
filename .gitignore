@@ -1,2 +1,5 @@
 /build/
 /cli/build/runtime/bin/
+# Docusarus
+/website/node_modules/
+/website/.docusaurus/

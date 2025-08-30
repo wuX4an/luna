@@ -1,0 +1,41 @@
+.hero {
+  background: linear-gradient(135deg, #0e1c49 0%, #000120 100%);
+  color: #dae0ee;
+  padding: 6rem 0;
+}
+
+.heroTitle {
+  font-size: 4rem;
+  font-weight: 700;
+}
+
+.heroSubtitle {
+  font-size: 1.5rem;
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+}
+
+.heroCtas .button {
+  margin: 0 0.5rem;
+  font-weight: 600;
+}
+
+.features {
+  background-color: #0e1c49;
+  color: #dae0ee;
+}
+
+.featureCard {
+  margin-bottom: 2rem;
+  transition: transform 0.2s ease-in-out;
+}
+
+.featureCard:hover {
+  transform: translateY(-5px);
+}
+
+.featureSvg {
+  width: 120px;
+  height: 120px;
+  margin-bottom: 1rem;
+}

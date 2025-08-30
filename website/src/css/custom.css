@@ -1,0 +1,83 @@
+/* =====================   Deno-inspired Theme Personalizado ===================== */
+
+/* Light mode (opcional - ajustado para un look más moderno y claro si se necesita) */
+:root {
+  --ifm-color-primary: #007bff; /* Azul primario vibrante */
+  --ifm-color-primary-dark: #0069d9;
+  --ifm-color-primary-darker: #0056b3;
+  --ifm-color-primary-darkest: #003a80;
+  --ifm-color-primary-light: #3395ff;
+  --ifm-color-primary-lighter: #66b2ff;
+  --ifm-color-primary-lightest: #99ceff;
+  --ifm-background-color: #f8f9fa; /* Fondo claro para light mode */
+  --ifm-color-background-secondary: #e9ecef; /* Sidebar o elementos secundarios claros */
+  --ifm-color-link: #007bff;
+  --ifm-color-link-hover: #0056b3;
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(0, 123, 255, 0.1);
+}
+
+/* Dark mode (inspirado en Deno) */
+[data-theme="dark"] {
+  --ifm-color-primary: #00e676; /* Verde lima vibrante para acento (como el logo de Deno) */
+  --ifm-color-primary-dark: #00c853;
+  --ifm-color-primary-darker: #00a02d;
+  --ifm-color-primary-darkest: #007800;
+  --ifm-color-primary-light: #33f08c;
+  --ifm-color-primary-lighter: #66f7a7;
+  --ifm-color-primary-lightest: #99ffc2;
+
+  --ifm-background-color: #1a202c; /* Fondo principal muy oscuro (similar a Deno Docs) */
+  --ifm-color-background-secondary: #2d3748; /* Sidebar o elementos secundarios más oscuros */
+  --ifm-color-sidebar-background: #2d3748;
+
+  --ifm-color-text: #e2e8f0; /* Color de texto claro para buen contraste */
+  --ifm-color-content: #e2e8f0; /* Color para contenido principal */
+
+  --ifm-color-link: #90cdf4; /* Azul claro para enlaces */
+  --ifm-color-link-hover: #63b3ed; /* Azul ligeramente más oscuro al pasar el ratón */
+
+  --ifm-code-font-size: 95%;
+  --docusaurus-highlighted-code-line-bg: rgba(
+    0,
+    230,
+    118,
+    0.2
+  ); /* Resaltado de código con tono verde */
+
+  color-scheme: dark;
+}
+
+/* Navbar */
+.navbar {
+  background-color: var(--ifm-background-color);
+  border-bottom: 1px solid var(--ifm-color-background-secondary); /* Separador sutil */
+}
+
+/* Sidebar */
+.sidebar {
+  background-color: var(--ifm-color-sidebar-background);
+}
+
+.sidebar .menu__list-item a {
+  color: var(
+    --ifm-color-text
+  ); /* El color del texto del sidebar se basa en el texto general */
+}
+
+.sidebar .menu__list-item--active > a {
+  color: var(
+    --ifm-color-primary
+  ); /* El color primario vibrante para el elemento activo */
+  font-weight: 600;
+}
+
+/* Links */
+a {
+  color: var(--ifm-color-link);
+}
+
+a:hover {
+  color: var(--ifm-color-link-hover);
+  text-decoration: underline; /* Añadir subrayado para mayor claridad */
+}
