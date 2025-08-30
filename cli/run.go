@@ -89,36 +89,30 @@ var runCmd = &cobra.Command{
 			if code, ok := modules[modName]; ok {
 				modPath := filepath.Join(projectDir, strings.ReplaceAll(modName, ".", string(os.PathSeparator))+".lua")
 
-				fn, err := L.LoadString(code)
-				if err != nil {
-					// Pasar: mainPath, error, modName
+				// Cargar y ejecutar el módulo SIN capturar errores con PCall
 
+				fn, err := L.Load(strings.NewReader(code), modPath)
+				if err != nil {
+					// Solo para errores de sintaxis al cargar
 					pretty := handler.PrettyLuaError(modPath, err, modName)
 					L.RaiseError("%s", pretty)
 					return 0
 				}
 
+				// Ejecutar el módulo y dejar que los errores se propaguen naturalmente
 				L.Push(fn)
-				if err := L.PCall(0, 1, nil); err != nil {
-					// Solo pasar el error ya formateado, NO formatear de nuevo
-					L.RaiseError("%s", err.Error())
-					return 0
-				}
+				L.Call(0, 1) // ←¡CAMBIAR ESTO TAMBIÉN! No usar PCall aquí
 
 				return 1
 			}
 
-			// fallback al require original
+			// fallback al require original - DEJAR PROPAGAR ERROR NATURALMENTE
 			L.Push(originRequire)
 			L.Push(lua.LString(modName))
-			if err := L.PCall(1, 1, nil); err != nil {
-				L.RaiseError("fallback require failed for %s: %v", modName, err)
-				return 0
-			}
+			L.Call(1, 1) // ← Esto está bien
 
 			return 1
-		})) // Run main script
-
+		}))
 		if err := L.DoFile(scriptPath); err != nil {
 			// Usar PrettyLuaError para el archivo principal también
 			pretty := handler.PrettyLuaError(scriptPath, err, "") // modName vacío para el entry

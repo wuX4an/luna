@@ -30,6 +30,11 @@ func PrettyLuaError(mainPath string, err error, modName string) string {
 		return msg
 	}
 
+	// --- Caso 0.5: Error "module not found" - Formatear bonito
+	if strings.Contains(msg, "module") && strings.Contains(msg, "not found") {
+		return renderModuleNotFoundError(msg, mainPath)
+	}
+
 	// --- Caso 1: Error de sintaxis directo de Lua (formato <string>)
 	if strings.HasPrefix(msg, "<string>") && strings.Contains(msg, "line:") {
 		lineNum, colNum, detail := parseSyntaxError(msg)
@@ -89,6 +94,31 @@ func PrettyLuaError(mainPath string, err error, modName string) string {
 
 	// --- Caso 4: Otros errores
 	return ColorRed + ColorBold + "error: " + ColorReset + cleanErrorMessage(msg)
+}
+
+func renderModuleNotFoundError(msg, mainPath string) string {
+	// Extraer información del error de módulo no encontrado
+	lines := strings.Split(msg, "\n")
+	if len(lines) == 0 {
+		return msg
+	}
+
+	// La primera línea contiene: "src/foo/foo.lua:3: module hsdasd not found:"
+	firstLine := lines[0]
+	parts := strings.SplitN(firstLine, ":", 3)
+	if len(parts) < 3 {
+		return msg
+	}
+
+	file := parts[0]
+	lineNum, _ := strconv.Atoi(parts[1])
+	detail := strings.TrimSpace(parts[2])
+
+	// Limpiar el detalle (remover los dos puntos extras)
+	detail = strings.TrimSuffix(detail, ":")
+
+	// Renderizar con el formato bonito
+	return renderErrorWithSource(file, lineNum, 1, detail)
 }
 
 func parseSyntaxError(msg string) (int, int, string) {
