@@ -163,11 +163,10 @@ func RunBuildPipeline(file, buildOS, buildArch string, runtimeBinary []byte, bui
 		return err
 	}
 
-	rootDir := cfg.Build.Source
 	treeStr := DependencyTreeWithSize(rootNode, modulesDir, "", true)
 	fmt.Printf("Embedded Files:\n\n%s\n%s\n", cfg.Build.Source, treeStr)
 
-	total := TotalSize(rootNode, rootDir)
+	total := TotalSize(rootNode, modulesDir)
 	fmt.Printf("\nSummary\n")
 	fmt.Printf("Files: %s\n", HumanSize(total))
 	return nil
