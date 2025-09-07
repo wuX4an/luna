@@ -6,7 +6,6 @@ on:
     paths:
       - "website/**"
       - "docs/**"
-  workflow_dispatch:
 
 jobs:
   deploy:
@@ -17,9 +16,6 @@ jobs:
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
-
-      - name: Prepare website
-        run: cp -r docs/ website/ || true
 
       - name: Install & Build
         run: |
