@@ -1,6 +1,6 @@
 # std:sqlite
 
-The `std:sqlite` module provides an easy-to-use interface to SQLite databases from Lua.
+The `std:sqlite` module provides an easy-to-use interface to SQLite databases from Lua.  
 It supports creating databases, executing SQL statements, performing transactions, and iterating over query results.
 
 ---
@@ -62,8 +62,9 @@ Executes a query returning rows (e.g., `SELECT`).
 - `rows` is an iterator object with methods:
   - `rows:next() -> table?` — fetch the next row or `nil`.
   - `rows:close()` — close the iterator.
+  - `rows:iter()` — optional iterator function compatible with `for r in rows:iter() do ... end`.
 
-**Example:**
+**Example using `next()`:**
 
 ```lua
 local rows, err = db:query("SELECT id, name FROM users ORDER BY id")
@@ -71,6 +72,16 @@ while true do
     local row = rows:next()
     if not row then break end
     print(string.format("ID=%d, Name=%s", row.id, row.name))
+end
+rows:close()
+```
+
+**Example using `iter()`:**
+
+```lua
+local rows = db:query("SELECT id, name FROM users ORDER BY id")
+for r in rows:iter() do
+    print(r.id, r.name)
 end
 rows:close()
 ```
@@ -89,7 +100,7 @@ db:close()
 
 ---
 
-## Complete Example:
+## Complete Example
 
 ```lua
 local sqlite = require("std:sqlite")
@@ -119,10 +130,7 @@ print("=== Users in the table ===")
 while true do
     local row = rows:next()
     if not row then break end
-    print(string.format("ID=%d, NAME=%s", row.id, row.name))  -- Print each user
--- ID=1, Name=Ana
--- ID=2, Name=Luis
--- ID=3, Name=Carlos
+    print(string.format("ID=%d, NAME=%s", row.id, row.name))
 end
 rows:close()
 
@@ -132,9 +140,9 @@ local countRow = countRows:next()
 countRows:close()
 print("\n=== Total users ===")
 print("TOTAL USERS:", countRow.total)
--- Total users:    3
 
 -- Close the database
 db:close()
 ```
+
 ---

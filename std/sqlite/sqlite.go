@@ -15,6 +15,7 @@ func registerRowsType(L *lua.LState) {
 	L.SetField(mt, "__index", L.SetFuncs(L.NewTable(), map[string]lua.LGFunction{
 		"next":  luaRowsNext,
 		"close": luaRowsClose,
+		"iter":  luaRowsIter,
 	}))
 }
 
