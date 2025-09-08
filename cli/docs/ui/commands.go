@@ -48,6 +48,8 @@ func processCommand(m Model) Model {
 		m.Content = Manual.Reference.Std.Env
 	case "/reference/std/crypto", "/crypto", "/std/crypto":
 		m.Content = Manual.Reference.Std.Crypto
+	case "/reference/std/json", "/json", "/std/json":
+		m.Content = Manual.Reference.Std.Json
 	default:
 		content := Manual.Index
 		m.Content = "\u200B│ **Command not found:** `" + inputVal + "`\n\n" + content

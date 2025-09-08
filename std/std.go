@@ -6,6 +6,7 @@ import (
 	"luna/std/env"
 	"luna/std/http"
 	"luna/std/ipc"
+	"luna/std/json"
 	"luna/std/math"
 	"luna/std/random"
 	"luna/std/sqlite"
@@ -28,4 +29,5 @@ func RegisterAll(L *lua.LState) {
 	L.PreloadModule("std:base64", base64.Loader)
 	L.PreloadModule("std:env", env.Loader)
 	L.PreloadModule("std:crypto", crypto.Loader)
+	L.PreloadModule("std:json", json.Loader)
 }

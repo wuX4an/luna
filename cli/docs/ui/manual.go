@@ -22,6 +22,7 @@ type STD struct {
 	Math   string
 	Env    string
 	Crypto string
+	Json   string
 }
 
 type Reference struct {
@@ -72,6 +73,7 @@ var Manual = ManualStruct{
 			Math:   luna.MustReadDocFile("reference/std/math.md"),
 			Env:    luna.MustReadDocFile("reference/std/env.md"),
 			Crypto: luna.MustReadDocFile("reference/std/crypto.md"),
+			Json:   luna.MustReadDocFile("reference/std/json.md"),
 		},
 	},
 }
