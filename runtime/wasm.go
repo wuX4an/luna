@@ -6,6 +6,8 @@ package main
 import (
 	"fmt"
 	"luna/src/luavm"
+	"path/filepath"
+	"strings"
 	"syscall/js"
 
 	lua "github.com/yuin/gopher-lua"
@@ -23,6 +25,8 @@ func main() {
 
 	// Función para fetch de módulos locales
 	fetchLocalModule := func(name string) (string, error) {
+		name = filepath.Join(strings.ReplaceAll(name, ".", "/"))
+
 		if code, ok := modules[name]; ok {
 			return code, nil
 		}
