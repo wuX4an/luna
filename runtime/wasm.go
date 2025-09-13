@@ -12,7 +12,7 @@ import (
 )
 
 func main() {
-	// Imprime "Luna: ok" al inicio
+	// Comprovar si el runtime si inicializo correctamente
 	js.Global().Get("console").Call("log", "Luna: ok")
 
 	L := luavm.NewLuaVM()
@@ -26,8 +26,20 @@ func main() {
 		if code, ok := modules[name]; ok {
 			return code, nil
 		}
+
+		// Detectar Node/Bun: presencia de "process"
+		isNode := js.Global().Get("process").Truthy() && js.Global().Get("require").Truthy()
+		if isNode {
+			fs := js.Global().Get("require").Invoke("fs")
+			path := "_modules/" + name + ".lua"
+			content := fs.Call("readFileSync", path, "utf8").String()
+			modules[name] = content
+			return content, nil
+		}
+
+		// Navegador
 		url := "_modules/" + name + ".lua"
-		js.Global().Get("console").Call("log", "Fetching module:", url)
+		js.Global().Get("console").Call("log", "Fetching module via fetch:", url)
 		promise := js.Global().Call("fetch", url)
 		then := make(chan js.Value)
 		catch := make(chan js.Value)
@@ -38,7 +50,6 @@ func main() {
 			catch <- args[0]
 			return nil
 		}))
-
 		select {
 		case resp := <-then:
 			textPromise := resp.Call("text")
