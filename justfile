@@ -13,6 +13,8 @@ bin-linux-arm64 := "GOOS=linux GOARCH=arm64"
 bin-darwin-amd64 := "GOOS=darwin GOARCH=amd64"
 bin-darwin-arm64 := "GOOS=darwin GOARCH=arm64"
 bin-windows-amd64 := "GOOS=windows GOARCH=amd64"
+bin-js-wasm := "GOOS=js GOARCH=wasm"
+
 
 default: runtime build
 
@@ -32,6 +34,7 @@ runtime:
 	env {{bin-darwin-amd64}} {{go-cgo}} go build {{go-flags}} -o {{runtime-bin-dir}}/runtime_darwin_amd64 {{runtime-dir}}
 	env {{bin-darwin-arm64}} {{go-cgo}} go build {{go-flags}} -o {{runtime-bin-dir}}/runtime_darwin_amd64 {{runtime-dir}}
 	env {{bin-windows-amd64}} {{go-cgo}} go build {{go-flags}} -o {{runtime-bin-dir}}/runtime_windows_amd64 {{runtime-dir}}
+	env {{bin-js-wasm}} {{go-cgo}} go build {{go-flags}} -o {{runtime-bin-dir}}/runtime_js_wasm {{runtime-dir}}
 
 
 # Limpiar binarios y temporales

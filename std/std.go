@@ -6,6 +6,7 @@ import (
 	"luna/std/env"
 	"luna/std/http"
 	"luna/std/ipc"
+	"luna/std/js"
 	"luna/std/json"
 	"luna/std/math"
 	"luna/std/random"
@@ -30,4 +31,5 @@ func RegisterAll(L *lua.LState) {
 	L.PreloadModule("std:env", env.Loader)
 	L.PreloadModule("std:crypto", crypto.Loader)
 	L.PreloadModule("std:json", json.Loader)
+	L.PreloadModule("std:js", js.Loader)
 }

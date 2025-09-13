@@ -21,6 +21,7 @@ var supportedTargets = []string{
 	"linux/amd64",
 	"linux/arm64",
 	"windows/amd64",
+	"js/wasm",
 	"darwin/amd64",
 	"darwin/arm64",
 }

@@ -1,3 +1,5 @@
+//go:build !js
+
 package sqlite
 
 import (
@@ -104,7 +106,6 @@ func luaDbTransaction(L *lua.LState) int {
 		NRet:    0,
 		Protect: true,
 	}, txUd)
-
 	if err != nil {
 		// Error en callback -> rollback
 		_ = tx.Rollback()

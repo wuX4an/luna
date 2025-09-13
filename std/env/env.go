@@ -1,3 +1,5 @@
+//go:build !js
+
 package env
 
 import lua "github.com/yuin/gopher-lua"

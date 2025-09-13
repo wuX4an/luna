@@ -1,3 +1,5 @@
+//go:build !js
+
 package sqlite
 
 import lua "github.com/yuin/gopher-lua"
