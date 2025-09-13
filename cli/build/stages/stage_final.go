@@ -1,12 +1,63 @@
 package stages
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
 )
+
+type FinalStage struct {
+	ModulesDir string
+	RootNode   *Node
+	Source     string
+}
+
+func NewFinalStage(modulesDir string, rootNode *Node, source string) *FinalStage {
+	return &FinalStage{
+		ModulesDir: modulesDir,
+		RootNode:   rootNode,
+		Source:     source,
+	}
+}
+
+func (f *FinalStage) Name() string { return "FinalStage" }
+
+func (f *FinalStage) Run(ctx context.Context) error {
+	treeStr := DependencyTreeWithSize(f.RootNode, f.ModulesDir, "", true)
+
+	fmt.Println(strings.Repeat("─", 50))
+	fmt.Printf("📦 Embedded Files:\n\n%s\n%s\n", f.Source, treeStr)
+
+	total := TotalSize(f.RootNode, f.ModulesDir)
+
+	var count int
+	err := filepath.Walk(f.ModulesDir, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return nil
+		}
+		if !info.IsDir() {
+			count++
+		}
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("\n📊 Summary")
+	fmt.Println(strings.Repeat("─", 50))
+	fmt.Printf("• Total files: %d\n", count)
+	fmt.Printf("• Total size: %s\n", HumanSize(total))
+	fmt.Printf("• Modules dir: %s\n", f.ModulesDir)
+
+	fmt.Println(strings.Repeat("─", 50))
+	fmt.Println("✅ Build complete")
+
+	return nil
+}
 
 var (
 	reRequire = regexp.MustCompile(`require\s*\(\s*["']([^"']+)["']\s*\)`)
@@ -20,10 +71,10 @@ type Node struct {
 
 // Convierte un módulo Lua tipo "hello" o "src.hello" -> ruta de archivo real
 func moduleToFile(modName string) string {
-	return filepath.FromSlash(modName) + ".lua"
+	return filepath.FromSlash(strings.ReplaceAll(modName, ".", "/")) + ".lua"
 }
 
-func parseModule(modName string, searchDirs []string) *Node {
+func ParseModule(modName string, searchDirs []string) *Node {
 	if seen[modName] {
 		return &Node{Name: modName} // evitar ciclos
 	}
@@ -70,7 +121,7 @@ func parseModule(modName string, searchDirs []string) *Node {
 			continue
 		}
 
-		child := parseModule(childName, searchDirs)
+		child := ParseModule(childName, searchDirs)
 		node.Children = append(node.Children, child)
 	}
 
@@ -123,6 +174,9 @@ func TotalSize(n *Node, rootDir string) int64 {
 	var walk func(node *Node)
 	walk = func(node *Node) {
 		path := filepath.Join(rootDir, strings.ReplaceAll(node.Name, ".", string(os.PathSeparator))+".lua")
+		if !strings.HasSuffix(path, ".lua") {
+			path += ".lua"
+		}
 		if fi, err := os.Stat(path); err == nil && !fi.IsDir() {
 			total += fi.Size()
 		}
@@ -165,16 +219,11 @@ func DependencyTreeWithSize(n *Node, modulesDir, prefix string, isLast bool) str
 	return sb.String()
 }
 
-func FlattenModules(n *Node, source string) []string {
+func FlattenModules(n *Node) []string {
 	var modules []string
 	var walk func(node *Node)
 	walk = func(node *Node) {
-		name := formatModuleName(node.Name)
-		if !strings.HasPrefix(name, source) {
-			name = source + name
-		}
-		modules = append(modules, name)
-
+		modules = append(modules, formatModuleName(node.Name))
 		for _, child := range node.Children {
 			walk(child)
 		}

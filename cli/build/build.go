@@ -6,6 +6,7 @@ import (
 	"luna/src/config"
 	"os"
 	"path/filepath"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -48,62 +49,83 @@ var BuildCmd = &cobra.Command{
 			return nil
 		}
 
-		// 1. Determinar archivo o directorio a empaquetar
+		// 1️⃣ Determinar archivo o directorio a empaquetar
 		file := "."
-		if len(args) == 0 {
-			file = "."
-		}
 		if len(args) > 0 {
 			file = args[0]
 		}
 
 		var entryFile string
-		// Si es un directorio, intentar leer Luna.toml
 		info, err := os.Stat(file)
 		if err != nil {
 			return err
 		}
+
 		if info.IsDir() {
-			configPath := filepath.Join("Luna.toml")
+			configPath := filepath.Join(file, "Luna.toml")
 			cfg, err := config.LoadConfig(configPath)
 			if err != nil {
 				return err
 			}
-
-			// Entry
 			entryFile = cfg.Build.Source
 			if !filepath.IsAbs(entryFile) {
 				entryFile = filepath.Join(file, entryFile)
 			}
-
-			// Target
 			if buildTarget == "" && cfg.Build.Target != "" {
 				buildTarget = cfg.Build.Target
 			}
-
-			// Output
 			if buildOutput == "" && cfg.Build.Output != "" {
 				buildOutput = cfg.Build.Output
 			}
 		} else {
-			// Es un archivo directo
 			entryFile = file
 		}
 
-		// 2. Parse target
+		// 2️⃣ Parse target
 		buildOS, buildArch, err := stages.ParseTarget(buildTarget)
 		if err != nil {
 			return err
 		}
 
-		// 3. Leer runtime embebido
+		// 3️⃣ Crear pipeline con stages concretos
 		runtimeBinary, err := stages.LoadRuntime(buildOS, buildArch)
 		if err != nil {
 			return err
 		}
 
-		// 4. Ejecutar pipeline de build
-		return stages.RunBuildPipeline(entryFile, buildOS, buildArch, runtimeBinary, buildOutput)
+		configPath := filepath.Join("Luna.toml")
+		cfg, err := config.LoadConfig(configPath)
+		if err != nil {
+			return err
+		}
+
+		prepareStage := stages.NewPrepareStage(entryFile, buildOutput)
+
+		entryMod := cfg.Build.Entry
+		if strings.HasSuffix(entryMod, ".lua") {
+			entryMod = entryMod[:len(entryMod)-len(".lua")]
+		}
+		entryMod = filepath.ToSlash(entryMod)
+
+		rootNode := stages.ParseModule(entryMod, []string{cfg.Build.Source, "."})
+
+		modules := stages.FlattenModules(rootNode)
+
+		copyStage := stages.NewCopyStage(cfg, buildOutput, modules)
+		bundleStage := stages.NewBundleStage(buildOutput)
+		compileStage := stages.NewCompileStage(runtimeBinary, buildOutput, buildOS, buildArch)
+
+		finalStage := stages.NewFinalStage(buildOutput+"/modules", rootNode, cfg.Build.Source)
+
+		pipeline := stages.NewPipeline(
+			prepareStage,
+			copyStage,
+			bundleStage,
+			compileStage,
+			finalStage,
+		)
+		// 4️⃣ Ejecutar pipeline
+		return pipeline.Run(cmd.Context())
 	},
 }
 

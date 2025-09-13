@@ -3,16 +3,62 @@ package stages
 import (
 	"archive/tar"
 	"compress/gzip"
+	"context"
 	"fmt"
 	"io"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 const (
 	// marker es una cadena utilizada para identificar el inicio del paquete de la aplicación dentro del ejecutable.
 	marker = "LUNA_BUNDLE"
 )
+
+type BundleStage struct {
+	OutputDir string
+}
+
+func NewBundleStage(outputDir string) *BundleStage {
+	return &BundleStage{OutputDir: outputDir}
+}
+
+func (b *BundleStage) Name() string { return "BundleStage" }
+
+func (b *BundleStage) Run(ctx context.Context) error {
+	modulesDir := filepath.Join(b.OutputDir, "modules")
+	tmpTar := filepath.Join(b.OutputDir, "bundle.tar.gz")
+	os.Remove(tmpTar)
+
+	if err := createTarGz(modulesDir, tmpTar); err != nil {
+		return fmt.Errorf("failed to create tar.gz: %w", err)
+	}
+
+	// Listar archivos empaquetados
+	files := []string{}
+	err := filepath.Walk(modulesDir, func(path string, info os.FileInfo, err error) error {
+		if err != nil || info.IsDir() {
+			return nil
+		}
+		rel, _ := filepath.Rel(modulesDir, path)
+		files = append(files, fmt.Sprintf("  • %s (%s)", filepath.ToSlash(rel), HumanSize(info.Size())))
+		return nil
+	})
+	if err != nil {
+		return err
+	}
+
+	fmt.Println("\n🚀 [3/4] Build Stage: Bundle")
+	fmt.Println(strings.Repeat("─", 40))
+	fmt.Printf("Tar bundle created: %s\n", tmpTar)
+	fmt.Println("Files included:")
+	for _, f := range files {
+		fmt.Println(f)
+	}
+	fmt.Println("Status: ✅ Done")
+	return nil
+}
 
 // createTarGz crea un archivo .tar.gz a partir de un directorio o archivo de origen.
 // Maneja tanto archivos sueltos como directorios, evitando incluir el archivo de salida.
