@@ -16,7 +16,7 @@ import (
 // Embedding templates
 // -------------------------
 
-//go:embed templates/*
+//go:embed all:templates/*
 var templatesFS embed.FS
 
 var force bool // <- nuevo flag global
@@ -118,6 +118,8 @@ var InitCmd = &cobra.Command{
 		} else {
 			fmt.Println("⚠️  No Luna.toml found in template (skipped placeholder replacement)")
 		}
+
+		GitInit(dir)
 
 		fmt.Println("✅ Project initialized successfully!")
 		return nil
