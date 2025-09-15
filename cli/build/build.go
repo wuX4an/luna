@@ -196,7 +196,7 @@ func buildWASM(ctx context.Context, entryFile string, cfg *config.LunaConfig) er
 	}
 
 	// 5️⃣ Archivos wasm.js e index.html desde embed
-	wasmFiles := []string{"wasm.js", "index.html"}
+	wasmFiles := []string{"wasm.js", "index.html", "sw.js"}
 	for _, f := range wasmFiles {
 		data, err := luna.ReadWasmFile(f)
 		if err != nil {

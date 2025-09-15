@@ -46,6 +46,7 @@ runtime:
   cp {{go-root}}/lib/wasm/wasm_exec.js {{build-dir}}/wasm/wasm.js
   chmod 644 {{build-dir}}/wasm/wasm.js
   cp std/web/index.html build/wasm
+  cp std/web/sw.js build/wasm
 
 # Limpiar binarios y temporales
 clean:

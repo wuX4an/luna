@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script src="wasm.js"></script>
     <script>
+      if ("serviceWorker" in navigator) {
+        navigator.serviceWorker
+          .register("/sw.js")
+          .then(() => console.log("[SW] Registred"))
+          .catch((err) => console.error("[SW] Error: ", err));
+      }
       const go = new Go();
       WebAssembly.instantiateStreaming(
         fetch("luna.wasm"),
