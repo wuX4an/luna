@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"luna/cli/build"
 	"luna/cli/docs"
+	_init "luna/cli/init"
 	"luna/cli/repl"
 	"luna/src/luavm"
 	"os"
@@ -82,6 +83,7 @@ func init() {
 	Cmd.AddCommand(build.BuildCmd)
 	Cmd.AddCommand(docs.DocCmd)
 	Cmd.AddCommand(repl.ReplCmd)
+	Cmd.AddCommand(_init.InitCmd)
 
 	// Flags
 	Cmd.PersistentFlags().BoolVarP(&versionFlag, "version", "v", false, "Print version")

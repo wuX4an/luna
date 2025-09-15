@@ -1,0 +1,9 @@
+[package]
+name = "{{PACKAGE_NAME}}"
+version = "0.1.0"
+
+[build]
+source = "src/"
+entry = "main.lua"
+target = "{{GOOS}}/{{GOARCH}}"
+output = "dist"
