@@ -7,6 +7,7 @@ build-dir := "build"
 bin-name := "luna"
 go-flags := "-ldflags='-s -w'"
 go-cgo := "CGO_ENABLED=0"
+go-root := "$(go env GOROOT)"
 
 bin-linux-amd64 := "GOOS=linux GOARCH=amd64"
 bin-linux-arm64 := "GOOS=linux GOARCH=arm64"
@@ -28,14 +29,23 @@ build:
 	CGO_ENABLED=0 go build {{go-flags}} -o {{build-dir}}/{{bin-name}} {{src-dir}}/main.go
 
 runtime:
-	mkdir -p {{runtime-bin-dir}}
-	env {{bin-linux-amd64}} {{go-cgo}} go build {{go-flags}} -o {{runtime-bin-dir}}/runtime_linux_amd64 {{runtime-dir}}
-	env {{bin-linux-arm64}} {{go-cgo}} go build {{go-flags}} -o {{runtime-bin-dir}}/runtime_linux_arm64 {{runtime-dir}}
-	env {{bin-darwin-amd64}} {{go-cgo}} go build {{go-flags}} -o {{runtime-bin-dir}}/runtime_darwin_amd64 {{runtime-dir}}
-	env {{bin-darwin-arm64}} {{go-cgo}} go build {{go-flags}} -o {{runtime-bin-dir}}/runtime_darwin_amd64 {{runtime-dir}}
-	env {{bin-windows-amd64}} {{go-cgo}} go build {{go-flags}} -o {{runtime-bin-dir}}/runtime_windows_amd64 {{runtime-dir}}
-	env {{bin-js-wasm}} {{go-cgo}} go build {{go-flags}} -o {{runtime-bin-dir}}/runtime_js_wasm {{runtime-dir}}
-
+  mkdir -p {{runtime-bin-dir}}
+  # Make linux/amd64
+  env {{bin-linux-amd64}} {{go-cgo}} go build {{go-flags}} -o {{runtime-bin-dir}}/runtime_linux_amd64 {{runtime-dir}}
+  # Make linux/arm64
+  env {{bin-linux-arm64}} {{go-cgo}} go build {{go-flags}} -o {{runtime-bin-dir}}/runtime_linux_arm64 {{runtime-dir}}
+  # Make darwin/amd64
+  env {{bin-darwin-amd64}} {{go-cgo}} go build {{go-flags}} -o {{runtime-bin-dir}}/runtime_darwin_amd64 {{runtime-dir}}
+  # Make darwin/arm64
+  env {{bin-darwin-arm64}} {{go-cgo}} go build {{go-flags}} -o {{runtime-bin-dir}}/runtime_darwin_amd64 {{runtime-dir}}
+  # Make windows/amd64
+  env {{bin-windows-amd64}} {{go-cgo}} go build {{go-flags}} -o {{runtime-bin-dir}}/runtime_windows_amd64 {{runtime-dir}}
+  # Make js/wasm
+  env {{bin-js-wasm}} {{go-cgo}} go build {{go-flags}} -o {{runtime-bin-dir}}/runtime_js_wasm {{runtime-dir}}
+  mkdir -p {{build-dir}}/wasm
+  cp {{go-root}}/lib/wasm/wasm_exec.js {{build-dir}}/wasm/wasm.js
+  chmod 644 {{build-dir}}/wasm/wasm.js
+  cp std/web/index.html build/wasm
 
 # Limpiar binarios y temporales
 clean:

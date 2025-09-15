@@ -13,6 +13,9 @@ import (
 //go:embed build/runtimes/*
 var EmbeddedRuntimes embed.FS
 
+//go:embed build/wasm/*
+var EmbeddedWasm embed.FS
+
 //go:embed docs*
 var EmbeddedDocs embed.FS
 
@@ -74,4 +77,28 @@ func ListDocs() ([]string, error) {
 		return nil
 	})
 	return files, err
+}
+
+// -------------------------
+// Access wasm
+// -------------------------
+
+func ListWasmFiles() ([]string, error) {
+	var files []string
+	err := fs.WalkDir(EmbeddedWasm, "build/wasm", func(path string, d fs.DirEntry, err error) error {
+		if err != nil {
+			return err
+		}
+		if !d.IsDir() {
+			files = append(files, path)
+		}
+		return nil
+	})
+	return files, err
+}
+
+// ReadWasmFile devuelve el contenido de un archivo específico dentro de build/wasm
+func ReadWasmFile(filename string) ([]byte, error) {
+	path := filepath.Join("build/wasm", filename)
+	return EmbeddedWasm.ReadFile(path)
 }
