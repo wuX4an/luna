@@ -1,6 +1,6 @@
 //go:build !js
 
-package js
+package web
 
 import (
 	"luna/src/stub"
@@ -9,5 +9,5 @@ import (
 )
 
 func Loader(L *lua.LState) int {
-	return stub.NewStub("std:js")(L)
+	return stub.NewStub("std:web")(L)
 }

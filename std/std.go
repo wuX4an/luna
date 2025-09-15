@@ -6,7 +6,6 @@ import (
 	"luna/std/env"
 	"luna/std/http"
 	"luna/std/ipc"
-	"luna/std/js"
 	"luna/std/json"
 	"luna/std/math"
 	"luna/std/random"
@@ -14,6 +13,7 @@ import (
 	"luna/std/tablex"
 	"luna/std/test"
 	"luna/std/time"
+	"luna/std/web"
 
 	lua "github.com/yuin/gopher-lua"
 )
@@ -31,5 +31,5 @@ func RegisterAll(L *lua.LState) {
 	L.PreloadModule("std:env", env.Loader)
 	L.PreloadModule("std:crypto", crypto.Loader)
 	L.PreloadModule("std:json", json.Loader)
-	L.PreloadModule("std:js", js.Loader)
+	L.PreloadModule("std:web", web.Loader)
 }

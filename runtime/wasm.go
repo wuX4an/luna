@@ -127,4 +127,5 @@ func main() {
 		js.Global().Get("console").Call("log", "Failed to run main.lua:", err.Error())
 		return
 	}
+	select {}
 }
