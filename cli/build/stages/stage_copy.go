@@ -3,7 +3,6 @@ package stages
 import (
 	"context"
 	"fmt"
-	"io"
 	"luna/src/config"
 	"os"
 	"path/filepath"
@@ -37,7 +36,7 @@ func (c *CopyStage) Run(ctx context.Context) error {
 		srcPath := filepath.Join(c.Config.Build.Source, relPath)
 		dstPath := filepath.Join(modulesDir, relPath)
 
-		if err := copyFile(srcPath, dstPath); err != nil {
+		if err := copyAndCleanFile(srcPath, dstPath); err != nil {
 			return fmt.Errorf("failed to copy %s: %w", relPath, err)
 		}
 
@@ -55,27 +54,51 @@ func (c *CopyStage) Run(ctx context.Context) error {
 	return nil
 }
 
-// copyFile asegura que los directorios existen y copia el archivo
-func copyFile(src, dst string) error {
+// copyAndCleanFile copia un archivo de src a dst y limpia bloques de test y require("std:test")
+func copyAndCleanFile(src, dst string) error {
+	data, err := os.ReadFile(src)
+	if err != nil {
+		return fmt.Errorf("failed to read %s: %w", src, err)
+	}
+
+	lines := strings.Split(string(data), "\n")
+	var cleaned []string
+	skipBlock, funcLevel := false, 0
+
+	for _, line := range lines {
+		trim := strings.TrimSpace(line)
+		if trim == "" {
+			continue
+		}
+		if skipBlock {
+			if strings.Contains(trim, "function") {
+				funcLevel++
+			}
+			if strings.Contains(trim, "end") {
+				funcLevel--
+				if funcLevel <= 0 {
+					skipBlock = false
+				}
+			}
+			continue
+		}
+		if strings.HasPrefix(trim, "table.insert(__TESTS__") {
+			skipBlock = true
+			funcLevel = 1
+			continue
+		}
+		if strings.Contains(trim, `require("std:test")`) || strings.Contains(trim, "__TESTS__ or {}") || strings.HasPrefix(trim, "--") {
+			continue
+		}
+		cleaned = append(cleaned, trim)
+	}
+
+	// Unir todo en una sola línea
+	oneLine := strings.Join(cleaned, " ")
+	oneLine = strings.Join(strings.Fields(oneLine), " ") // eliminar espacios dobles
+
 	if err := os.MkdirAll(filepath.Dir(dst), 0o755); err != nil {
-		return err
+		return fmt.Errorf("failed to create dir %s: %w", filepath.Dir(dst), err)
 	}
-
-	in, err := os.Open(src)
-	if err != nil {
-		return err
-	}
-	defer in.Close()
-
-	out, err := os.Create(dst)
-	if err != nil {
-		return err
-	}
-	defer out.Close()
-
-	if _, err := io.Copy(out, in); err != nil {
-		return err
-	}
-
-	return out.Close()
+	return os.WriteFile(dst, []byte(oneLine), 0o644)
 }
