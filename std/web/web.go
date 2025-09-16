@@ -4,6 +4,7 @@
 package web
 
 import (
+	"luna/std/web/animate"
 	"luna/std/web/audio"
 	"luna/std/web/await"
 	"luna/std/web/clipboard"
@@ -32,6 +33,7 @@ func Loader(L *lua.LState) int {
 	timerMod := timer.Loader(L)
 	domMod := dom.Loader(L)
 	audioMod := audio.Loader(L)
+	animateMod := animate.Loader(L)
 
 	mod.RawSetString("console", consoleMod)
 	mod.RawSetString("cookie", cookieMod)
@@ -43,6 +45,7 @@ func Loader(L *lua.LState) int {
 	mod.RawSetString("timer", timerMod)
 	mod.RawSetString("dom", domMod)
 	mod.RawSetString("audio", audioMod)
+	mod.RawSetString("animate", animateMod)
 
 	L.Push(mod)
 	return 1

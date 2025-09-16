@@ -10,7 +10,7 @@ import (
 )
 
 type DOMUserData struct {
-	elem js.Value
+	Elem js.Value
 }
 
 const domTypeName = "DOMElement"
@@ -27,37 +27,37 @@ func registerMethods(L *lua.LState) *lua.LTable {
 		"append": func(L *lua.LState) int {
 			ud := checkDOM(L, 1)
 			child := checkDOM(L, 2)
-			ud.elem.Call("appendChild", child.elem)
+			ud.Elem.Call("appendChild", child.Elem)
 			return 0
 		},
 		"appendText": func(L *lua.LState) int {
 			ud := checkDOM(L, 1)
 			text := L.CheckString(2)
-			current := ud.elem.Get("textContent").String()
-			ud.elem.Set("textContent", current+text)
+			current := ud.Elem.Get("textContent").String()
+			ud.Elem.Set("textContent", current+text)
 			return 0
 		},
 		"clear": func(L *lua.LState) int {
 			ud := checkDOM(L, 1)
-			for child := ud.elem.Get("firstChild"); child.Truthy(); child = ud.elem.Get("firstChild") {
-				ud.elem.Call("removeChild", child)
+			for child := ud.Elem.Get("firstChild"); child.Truthy(); child = ud.Elem.Get("firstChild") {
+				ud.Elem.Call("removeChild", child)
 			}
 			return 0
 		},
 		"remove": func(L *lua.LState) int {
 			ud := checkDOM(L, 1)
-			parent := ud.elem.Get("parentNode")
+			parent := ud.Elem.Get("parentNode")
 			if parent.Truthy() {
-				parent.Call("removeChild", ud.elem)
+				parent.Call("removeChild", ud.Elem)
 			}
 			return 0
 		},
 		"replaceWith": func(L *lua.LState) int {
 			ud := checkDOM(L, 1)
 			newUD := checkDOM(L, 2)
-			parent := ud.elem.Get("parentNode")
+			parent := ud.Elem.Get("parentNode")
 			if parent.Truthy() {
-				parent.Call("replaceChild", newUD.elem, ud.elem)
+				parent.Call("replaceChild", newUD.Elem, ud.Elem)
 			}
 			return 0
 		},
@@ -67,22 +67,22 @@ func registerMethods(L *lua.LState) *lua.LTable {
 		// ---------------------------
 		"hide": func(L *lua.LState) int {
 			ud := checkDOM(L, 1)
-			ud.elem.Get("style").Set("display", "none")
+			ud.Elem.Get("style").Set("display", "none")
 			return 0
 		},
 		"show": func(L *lua.LState) int {
 			ud := checkDOM(L, 1)
-			ud.elem.Get("style").Set("display", "block") // o "flex" según layout
+			ud.Elem.Get("style").Set("display", "block") // o "flex" según layout
 			return 0
 		},
 		"toggle": func(L *lua.LState) int {
 			ud := checkDOM(L, 1)
-			style := ud.elem.Get("style")
+			style := ud.Elem.Get("style")
 			current := style.Get("display").String()
 
 			if current == "none" {
 				// Restaurar display original si se guardó
-				orig := ud.elem.Get("dataset").Get("originalDisplay").String()
+				orig := ud.Elem.Get("dataset").Get("originalDisplay").String()
 				if orig == "" {
 					orig = "block" // valor por defecto
 				}
@@ -90,9 +90,9 @@ func registerMethods(L *lua.LState) *lua.LTable {
 			} else {
 				// Guardar display original antes de ocultar
 				if style.Get("display").Truthy() {
-					ud.elem.Get("dataset").Set("originalDisplay", current)
+					ud.Elem.Get("dataset").Set("originalDisplay", current)
 				} else {
-					ud.elem.Get("dataset").Set("originalDisplay", "block")
+					ud.Elem.Get("dataset").Set("originalDisplay", "block")
 				}
 				style.Set("display", "none")
 			}
@@ -105,25 +105,25 @@ func registerMethods(L *lua.LState) *lua.LTable {
 		"addClass": func(L *lua.LState) int {
 			ud := checkDOM(L, 1)
 			class := L.CheckString(2)
-			ud.elem.Get("classList").Call("add", class)
+			ud.Elem.Get("classList").Call("add", class)
 			return 0
 		},
 		"removeClass": func(L *lua.LState) int {
 			ud := checkDOM(L, 1)
 			class := L.CheckString(2)
-			ud.elem.Get("classList").Call("remove", class)
+			ud.Elem.Get("classList").Call("remove", class)
 			return 0
 		},
 		"hasClass": func(L *lua.LState) int {
 			ud := checkDOM(L, 1)
 			class := L.CheckString(2)
-			L.Push(lua.LBool(ud.elem.Get("classList").Call("contains", class).Bool()))
+			L.Push(lua.LBool(ud.Elem.Get("classList").Call("contains", class).Bool()))
 			return 1
 		},
 		"toggleClass": func(L *lua.LState) int {
 			ud := checkDOM(L, 1)
 			class := L.CheckString(2)
-			ud.elem.Get("classList").Call("toggle", class)
+			ud.Elem.Get("classList").Call("toggle", class)
 			return 0
 		},
 
@@ -134,32 +134,32 @@ func registerMethods(L *lua.LState) *lua.LTable {
 			ud := checkDOM(L, 1)
 			key := L.CheckString(2)
 			val := L.CheckString(3)
-			ud.elem.Set(key, val)
+			ud.Elem.Set(key, val)
 			return 0
 		},
 		"getAttr": func(L *lua.LState) int {
 			ud := checkDOM(L, 1)
 			key := L.CheckString(2)
-			L.Push(lua.LString(ud.elem.Get(key).String()))
+			L.Push(lua.LString(ud.Elem.Get(key).String()))
 			return 1
 		},
 		"hasAttr": func(L *lua.LState) int {
 			ud := checkDOM(L, 1)
 			key := L.CheckString(2)
-			L.Push(lua.LBool(!ud.elem.Get(key).IsUndefined()))
+			L.Push(lua.LBool(!ud.Elem.Get(key).IsUndefined()))
 			return 1
 		},
 		"removeAttr": func(L *lua.LState) int {
 			ud := checkDOM(L, 1)
 			key := L.CheckString(2)
-			ud.elem.Call("removeAttribute", key)
+			ud.Elem.Call("removeAttribute", key)
 			return 0
 		},
 		"setProps": func(L *lua.LState) int {
 			ud := checkDOM(L, 1)
 			props := L.CheckTable(2)
 			props.ForEach(func(k, v lua.LValue) {
-				ud.elem.Set(k.String(), v.String())
+				ud.Elem.Set(k.String(), v.String())
 			})
 			return 0
 		},
@@ -171,14 +171,14 @@ func registerMethods(L *lua.LState) *lua.LTable {
 			ud := checkDOM(L, 1)
 			styles := L.CheckTable(2)
 			styles.ForEach(func(k, v lua.LValue) {
-				ud.elem.Get("style").Set(k.String(), v.String())
+				ud.Elem.Get("style").Set(k.String(), v.String())
 			})
 			return 0
 		},
 		"setText": func(L *lua.LState) int {
 			ud := checkDOM(L, 1)
 			text := L.CheckString(2)
-			ud.elem.Set("textContent", text)
+			ud.Elem.Set("textContent", text)
 			return 0
 		},
 
@@ -194,7 +194,7 @@ func registerMethods(L *lua.LState) *lua.LTable {
 				evt := L.NewTable()
 
 				targetUD := L.NewUserData()
-				targetUD.Value = &DOMUserData{elem: args[0].Get("target")}
+				targetUD.Value = &DOMUserData{Elem: args[0].Get("target")}
 				evt.RawSetString("target", targetUD)
 
 				if args[0].Get("value").Truthy() {
@@ -217,7 +217,7 @@ func registerMethods(L *lua.LState) *lua.LTable {
 				return nil
 			})
 
-			ud.elem.Call("addEventListener", event, cb)
+			ud.Elem.Call("addEventListener", event, cb)
 			return 0
 		},
 	}))
@@ -257,21 +257,21 @@ func newElement(tag string) lua.LGFunction {
 		case lua.LTUserData:
 			if c, ok := child.(*lua.LUserData); ok {
 				if d, ok := c.Value.(*DOMUserData); ok {
-					elem.Call("appendChild", d.elem)
+					elem.Call("appendChild", d.Elem)
 				}
 			}
 		case lua.LTTable:
 			child.(*lua.LTable).ForEach(func(_, v lua.LValue) {
 				if c, ok := v.(*lua.LUserData); ok {
 					if d, ok := c.Value.(*DOMUserData); ok {
-						elem.Call("appendChild", d.elem)
+						elem.Call("appendChild", d.Elem)
 					}
 				}
 			})
 		}
 
 		ud := L.NewUserData()
-		ud.Value = &DOMUserData{elem: elem}
+		ud.Value = &DOMUserData{Elem: elem}
 		L.SetMetatable(ud, L.GetTypeMetatable(domTypeName))
 		L.Push(ud)
 		return 1
@@ -281,7 +281,7 @@ func newElement(tag string) lua.LGFunction {
 func domRoot(L *lua.LState) int {
 	elem := js.Global().Get("document").Get("body")
 	ud := L.NewUserData()
-	ud.Value = &DOMUserData{elem: elem}
+	ud.Value = &DOMUserData{Elem: elem}
 	L.SetMetatable(ud, L.GetTypeMetatable(domTypeName))
 	L.Push(ud)
 	return 1
@@ -317,20 +317,20 @@ func Loader(L *lua.LState) *lua.LTable {
 			case lua.LTUserData:
 				if c, ok := child.(*lua.LUserData); ok {
 					if d, ok := c.Value.(*DOMUserData); ok {
-						elem.Call("appendChild", d.elem)
+						elem.Call("appendChild", d.Elem)
 					}
 				}
 			case lua.LTTable:
 				child.(*lua.LTable).ForEach(func(_, v lua.LValue) {
 					if c, ok := v.(*lua.LUserData); ok {
 						if d, ok := c.Value.(*DOMUserData); ok {
-							elem.Call("appendChild", d.elem)
+							elem.Call("appendChild", d.Elem)
 						}
 					}
 				})
 			}
 			ud := L.NewUserData()
-			ud.Value = &DOMUserData{elem: elem}
+			ud.Value = &DOMUserData{Elem: elem}
 			L.SetMetatable(ud, L.GetTypeMetatable(domTypeName))
 			L.Push(ud)
 			return 1
