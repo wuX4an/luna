@@ -12,6 +12,7 @@ import (
 	"luna/std/web/cookie"
 	"luna/std/web/dom"
 	"luna/std/web/fetch"
+	"luna/std/web/keyboard"
 	"luna/std/web/notify"
 	"luna/std/web/storage"
 	"luna/std/web/timer"
@@ -34,6 +35,7 @@ func Loader(L *lua.LState) int {
 	domMod := dom.Loader(L)
 	audioMod := audio.Loader(L)
 	animateMod := animate.Loader(L)
+	keyboardMod := keyboard.Loader(L)
 
 	mod.RawSetString("console", consoleMod)
 	mod.RawSetString("cookie", cookieMod)
@@ -46,6 +48,7 @@ func Loader(L *lua.LState) int {
 	mod.RawSetString("dom", domMod)
 	mod.RawSetString("audio", audioMod)
 	mod.RawSetString("animate", animateMod)
+	mod.RawSetString("keyboard", keyboardMod)
 
 	L.Push(mod)
 	return 1
