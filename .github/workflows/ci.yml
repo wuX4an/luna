@@ -1,0 +1,30 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [develop]
+    paths:
+      - "src/**"
+      - "std/**"
+      - "cli/**"
+      - "runtime/**"
+      - "docs/**"
+      - "embed.go"
+      - "go.mod"
+      - "go.sum"
+      - "justfile"
+      - "LICENSE"
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.24.3"
+      - name: Run golangci-lint
+        uses: golangci/golangci-lint-action@v6
+        with:
+          version: v1.64.2
+          args: ./...

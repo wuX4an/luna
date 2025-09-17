@@ -1,0 +1,30 @@
+name: Release CI
+
+on:
+  push:
+    tags:
+      - "*.*.*"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.24.3"
+      - uses: extractions/setup-just@v3
+      - name: Build Release
+        run: just release
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Luna ${{ github.ref_name }}
+          draft: true
+          prerelease: false
+          files: |
+            ./build/bin/*
+            ./build/metadata/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
