@@ -1,0 +1,46 @@
+name: Nightly CI
+
+on:
+  pull_request:
+    branches: [develop]
+    paths:
+      - "src/**"
+      - "std/**"
+      - "cli/**"
+      - "runtime/**"
+      - "docs/**"
+      - "embed.go"
+      - "go.mod"
+      - "go.sum"
+      - "justfile"
+      - "LICENSE"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.24.3"
+      - uses: extractions/setup-just@v3
+      - name: Build Nightly
+        run: just release
+      - name: Set variables
+        run: |
+          echo "SHA_SHORT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+          echo "DATE=$(date +'%Y.%m.%d.%H')" >> $GITHUB_ENV
+      - name: Create Pre-release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: nightly-${{ env.DATE }}-${{ env.SHA_SHORT }}
+          name: Nightly Build ${{ env.SHA_SHORT }}
+          body: |
+            Nightly build generated from commit `${{ env.SHA_SHORT }}` on `${{ github.event.head_commit.timestamp }}`
+          files: |
+            ./build/bin/*
+            ./build/metadata/*
+          draft: false
+          prerelease: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
