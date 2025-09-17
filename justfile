@@ -4,6 +4,7 @@ cli-dir := "./cli"
 runtime-dir := "./runtime"
 runtime-bin-dir := "./build/runtimes"
 build-dir := "build"
+metadata-dir := "build/metadata"
 bin-name := "luna"
 go-flags := "-ldflags='-s -w'"
 go-cgo := "CGO_ENABLED=0"
@@ -17,16 +18,34 @@ bin-windows-amd64 := "GOOS=windows GOARCH=amd64"
 bin-js-wasm := "GOOS=js GOARCH=wasm"
 
 
-default: runtime build
+default: clean runtime build
+release: clean runtime build-all checksums
 
-# Ejecutar el runtime directamente (modo desarrollo)
 run:
 	go run {{src-dir}}
 
-# Compilar el binario CLI de Luna (con todos los comandos)
+GO_DATE := `date +"%Y:%m:%-d:%H"`
+GO_VERSION := `git describe --tags --abbrev=0 2>/dev/null || git rev-parse --short HEAD`
+
 build:
-	mkdir -p {{build-dir}}
-	CGO_ENABLED=0 go build {{go-flags}} -o {{build-dir}}/{{bin-name}} {{src-dir}}/main.go
+  # Build
+  mkdir -p {{build-dir}}
+  go build -ldflags "-X 'luna/cli.lunaVersion={{GO_VERSION}}' -X 'luna/cli.lunaBuildDate={{GO_DATE}}'" -o {{build-dir}}/{{bin-name}} {{src-dir}}/main.go
+
+build-all:
+  # Build all
+  mkdir -p {{build-dir}}
+  mkdir -p {{build-dir}}/bin
+  # Linux amd64
+  env {{bin-linux-amd64}} go build -ldflags "-X 'luna/cli.lunaVersion={{GO_VERSION}}' -X 'luna/cli.lunaBuildDate={{GO_DATE}}'" -o {{build-dir}}/bin/{{bin-name}}_linux_amd64 {{src-dir}}/main.go
+  # Linux arm64
+  env {{bin-linux-arm64}} go build -ldflags "-X 'luna/cli.lunaVersion={{GO_VERSION}}' -X 'luna/cli.lunaBuildDate={{GO_DATE}}'" -o {{build-dir}}/bin/{{bin-name}}_linux_arm64 {{src-dir}}/main.go
+  # Darwin amd64
+  env {{bin-darwin-amd64}} go build -ldflags "-X 'luna/cli.lunaVersion={{GO_VERSION}}' -X 'luna/cli.lunaBuildDate={{GO_DATE}}'" -o {{build-dir}}/bin/{{bin-name}}_darwin_amd64 {{src-dir}}/main.go
+  # Darwin arm64
+  env {{bin-darwin-arm64}} go build -ldflags "-X 'luna/cli.lunaVersion={{GO_VERSION}}' -X 'luna/cli.lunaBuildDate={{GO_DATE}}'" -o {{build-dir}}/bin/{{bin-name}}_darwin_arm64 {{src-dir}}/main.go
+  # Windows amd64
+  env {{bin-windows-amd64}} go build -ldflags "-X 'luna/cli.lunaVersion={{GO_VERSION}}' -X 'luna/cli.lunaBuildDate={{GO_DATE}}'" -o {{build-dir}}/bin/{{bin-name}}_windows_amd64 {{src-dir}}/main.go
 
 runtime:
   mkdir -p {{runtime-bin-dir}}
@@ -48,17 +67,22 @@ runtime:
   cp std/web/index.html build/wasm
   cp std/web/sw.js build/wasm
 
-# Limpiar binarios y temporales
-clean:
-	rm -rf {{build-dir}} *.tar.gz *.exe *.out
+checksums:
+  # Make build/metadata dir
+  mkdir -p {{metadata-dir}}
+  # Checksums
+  cd {{build-dir}}/bin; find . -type f ! -name "checksums.txt" -exec sha256sum {} \; > ../../{{metadata-dir}}/checksums.txt
 
-# Ejecutar tests de Go
+check:
+  # Check files integrity
+  cd {{build-dir}}/bin; sha256sum -c ../../{{metadata-dir}}/checksums.txt
+
+clean:
+  # Clean
+  rm -rf {{build-dir}}
+
 test:
 	go test ./...
-
-# Empaquetar un script Lua como ejecutable (ej: just package src)
-package script:
-	{{build-dir}}/{{bin-name}} build {{script}}
 
 # Ayuda general
 help:
@@ -67,4 +91,3 @@ help:
 	@echo "  just build            # Compila el binario CLI en ./build/luna"
 	@echo "  just clean            # Elimina binarios y archivos temporales"
 	@echo "  just test             # Ejecuta los tests de Go"
-	@echo "  just package <file>   # Empaqueta un script Lua como ejecutable"

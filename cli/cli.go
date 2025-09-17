@@ -1,7 +1,9 @@
 package cli
 
 import (
+	"crypto/sha256"
 	"fmt"
+	"io"
 	"luna/cli/build"
 	"luna/cli/docs"
 	_init "luna/cli/init"
@@ -30,7 +32,7 @@ var Cmd = &cobra.Command{
 		cmd.SilenceErrors = true
 
 		if versionFlag {
-			fmt.Println("luna version 0.1.0")
+			printVersion()
 			return
 		}
 
@@ -128,4 +130,29 @@ func Execute() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+}
+
+var (
+	lunaVersion   = "0.1.0"
+	lunaBuildDate = "unknown"
+)
+
+func printVersion() {
+	exePath, err := os.Executable()
+	if err != nil {
+		panic(err)
+	}
+
+	f, err := os.Open(exePath)
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+
+	h := sha256.New()
+	if _, err := io.Copy(h, f); err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("luna v%s (%x %s)\n", lunaVersion, h.Sum(nil)[:6], lunaBuildDate)
 }
