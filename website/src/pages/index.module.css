@@ -5,9 +5,37 @@
 
 .heroBanner {
   padding: 4rem 0;
-  text-align: center;
+  text-align: left;
   position: relative;
   overflow: hidden;
+  color: #dadada;
+}
+
+.heroTitle {
+  background: -webkit-linear-gradient(280deg, #41d1f2, #ffb36b);
+
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  background-clip: text;
+  color: transparent;
+
+  font-size: 80px;
+}
+
+.heroDesc {
+  font-size: 35px;
+  margin-bottom: 0px;
+  max-width: 600px;
+  font-weight: bold;
+}
+
+.heroMotto {
+  font-style: italic;
+  font-weight: bold;
+  margin-top: 0px;
+  color: #8e8e94;
+  font-size: 22px;
 }
 
 @media screen and (max-width: 996px) {
@@ -16,8 +44,67 @@
   }
 }
 
-.buttons {
+.buttonContainer {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  gap: 1rem;
+  justify-content: left;
+  align-items: left;
+  margin-top: 2rem;
+}
+
+.buttonStart {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  font-size: 1rem;
+  color: white;
+  background: -webkit-linear-gradient(280deg, #0ea5e9, #3b82f6);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  border: none;
+  transition:
+    background 0.3s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.buttonStart:hover {
+  background: -webkit-linear-gradient(280deg, #3b82f6, #0ea5e9);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+  color: white;
+  cursor: pointer;
+}
+
+.buttonStart:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.buttonGithub {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  font-size: 1rem;
+  color: white;
+  background: -webkit-linear-gradient(280deg, #32363f, #4b4f5c);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  border: none;
+  transition:
+    background 0.3s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    color 0.3s ease;
+}
+
+.buttonGithub:hover {
+  background: -webkit-linear-gradient(280deg, #3b3f49, #5a6070);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+  color: white;
+  cursor: pointer;
+}
+
+.buttonGithub:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }

@@ -1,25 +1,11 @@
-/* =====================   Deno-inspired Theme Personalizado ===================== */
+/* ===================== Luna Theme ===================== */
 
-/* Light mode (opcional - ajustado para un look más moderno y claro si se necesita) */
+@import url("https://cdn.jsdelivr.net/npm/@fontsource/iosevka-aile@5.2.5/index.min.css");
+
 :root {
-  --ifm-color-primary: #007bff; /* Azul primario vibrante */
-  --ifm-color-primary-dark: #0069d9;
-  --ifm-color-primary-darker: #0056b3;
-  --ifm-color-primary-darkest: #003a80;
-  --ifm-color-primary-light: #3395ff;
-  --ifm-color-primary-lighter: #66b2ff;
-  --ifm-color-primary-lightest: #99ceff;
-  --ifm-background-color: #f8f9fa; /* Fondo claro para light mode */
-  --ifm-color-background-secondary: #e9ecef; /* Sidebar o elementos secundarios claros */
-  --ifm-color-link: #007bff;
-  --ifm-color-link-hover: #0056b3;
-  --ifm-code-font-size: 95%;
-  --docusaurus-highlighted-code-line-bg: rgba(0, 123, 255, 0.1);
-}
-
-/* Dark mode (inspirado en Deno) */
-[data-theme="dark"] {
-  --ifm-color-primary: #00e676; /* Verde lima vibrante para acento (como el logo de Deno) */
+  --ifm-font-family-base: "Iosevka", monospace !important;
+  --ifm-font-family-monospace: "Iosevka", monospace !important;
+  --ifm-color-primary: #1b1b1f;
   --ifm-color-primary-dark: #00c853;
   --ifm-color-primary-darker: #00a02d;
   --ifm-color-primary-darkest: #007800;
@@ -27,57 +13,165 @@
   --ifm-color-primary-lighter: #66f7a7;
   --ifm-color-primary-lightest: #99ffc2;
 
-  --ifm-background-color: #1a202c; /* Fondo principal muy oscuro (similar a Deno Docs) */
-  --ifm-color-background-secondary: #2d3748; /* Sidebar o elementos secundarios más oscuros */
+  --ifm-background-color: #1b1b1f;
+  --ifm-color-background-secondary: #2d3748;
   --ifm-color-sidebar-background: #2d3748;
 
-  --ifm-color-text: #e2e8f0; /* Color de texto claro para buen contraste */
-  --ifm-color-content: #e2e8f0; /* Color para contenido principal */
+  --ifm-color-text: #e2e8f0;
+  --ifm-color-content: #e2e8f0;
 
-  --ifm-color-link: #90cdf4; /* Azul claro para enlaces */
-  --ifm-color-link-hover: #63b3ed; /* Azul ligeramente más oscuro al pasar el ratón */
+  --ifm-color-link: #e2e8f0;
+  --ifm-color-link-hover: #63b3ed;
 
   --ifm-code-font-size: 95%;
-  --docusaurus-highlighted-code-line-bg: rgba(
-    0,
-    230,
-    118,
-    0.2
-  ); /* Resaltado de código con tono verde */
+  --docusaurus-highlighted-code-line-bg: rgba(0, 230, 118, 0.2);
+
+  --search-local-modal-background: #1b1b1f;
+  --search-local-modal-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  --search-local-modal-width: 600px;
+
+  /* Resultados de búsqueda */
+  --search-local-hit-background: #2d3748; /* Fondo de cada resultado */
+  --search-local-hit-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  --search-local-hit-color: #e2e8f0; /* Color del texto */
+  --search-local-hit-active-color: #a0aec0; /* Color del texto seleccionado */
+  --search-local-highlight-color: #404867; /* Color de resaltado de palabras */
+  --search-local-muted-color: #7f8c9a; /* Texto secundario */
+  --search-local-icon-stroke-width: 2; /* Grosor de iconos */
+
+  /* Input de búsqueda */
+  --search-local-input-active-border-color: #a0aec0; /* borde al focus */
+  /* Input de búsqueda mejorado */
+  .navbar__search-input {
+    font-family: "Iosevka", monospace !important;
+    background-color: #161618;
+    color: #e2e8f0;
+    border: 1px solid #4b5563;
+    border-radius: 8px;
+    padding-top: 1.2rem; /* vertical u horizontal: 0.6rem arriba/abajo, 0.8rem izquierda/derecha */
+    padding-bottom: 1.2rem; /* vertical u horizontal: 0.6rem arriba/abajo, 0.8rem izquierda/derecha */
+    font-size: 1rem; /* opcional: aumentar texto para que combine */
+    transition: all 0.2s ease-in-out;
+  }
+
+  /* Efecto al enfocar */
+  .navbar__search-input:focus {
+    outline: none;
+    border-color: #4fd1c5; /* Mantener cian suave */
+    box-shadow: 0 0 4px rgba(79, 209, 197, 0.3); /* Sombra más tenue */
+    background-color: #1c1c22; /* mucho más oscuro */
+    transform: scale(1.025);
+  }
+  .searchHint_iIMx {
+    font-family: "Iosevka", monospace !important;
+    display: inline-block;
+    background: linear-gradient(145deg, #23232b, #1b1b1f);
+    color: #8e8e94;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 0.2rem 0.5rem;
+    margin: 0 0.15rem;
+    border-radius: 8px;
+    border: 1px solid #2c2c34; /* borde más tenue */
+    box-shadow:
+      2px 2px 4px rgba(0, 0, 0, 0.5),
+      inset -1px -1px 2px rgba(255, 255, 255, 0.1);
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+    transition: all 0.15s ease-in-out;
+    cursor: default;
+  }
 
   color-scheme: dark;
 }
 
-/* Navbar */
+/* ===================== Navbar ===================== */
 .navbar {
   background-color: var(--ifm-background-color);
-  border-bottom: 1px solid var(--ifm-color-background-secondary); /* Separador sutil */
+  border-bottom: 1px solid var(--ifm-color-background-secondary);
 }
 
-/* Sidebar */
+.navbar__link:hover {
+  color: #0ea5e9;
+}
+
+/* ===================== Sidebar ===================== */
 .sidebar {
   background-color: var(--ifm-color-sidebar-background);
 }
 
-.sidebar .menu__list-item a {
-  color: var(
-    --ifm-color-text
-  ); /* El color del texto del sidebar se basa en el texto general */
+/* Links principales */
+.menu__list-item a.menu__link {
+  color: #a0aec0;
+  transition: color 0.2s ease;
 }
-
-.sidebar .menu__list-item--active > a {
-  color: var(
-    --ifm-color-primary
-  ); /* El color primario vibrante para el elemento activo */
+.menu__list-item > a.menu__link:hover {
+  color: #4fd1c5;
+}
+.menu__list-item > a.menu__link--active {
+  color: #0ea5e9;
   font-weight: 600;
 }
 
-/* Links */
-a {
-  color: var(--ifm-color-link);
+/* Sublinks de todas las sublistas */
+.menu__list-item ul.menu__list li a.menu__link {
+  color: #a0aec0;
+}
+.menu__list-item ul.menu__list li a.menu__link:hover {
+  color: #63b3ed;
+}
+.menu__list-item ul.menu__list li a.menu__link--active {
+  color: #38bdf8;
+  font-weight: 600;
 }
 
+.breadcrumbs__link {
+  color: #38bdf8; /* Cyan brillante, consistente con tus links activos */
+}
+
+.table-of-contents__link--active {
+  color: #38bdf8; /* Cyan brillante consistente con links activos */
+  font-weight: 600; /* Opcional: resalta más */
+}
+
+/* ===================== Links generales ===================== */
+a {
+  color: var(--ifm-color-link);
+  font-weight: bold;
+}
 a:hover {
   color: var(--ifm-color-link-hover);
-  text-decoration: underline; /* Añadir subrayado para mayor claridad */
+}
+code {
+  background-color: #282a36;
+  color: #38bdf8;
+  padding: 0.2em 0.4em;
+  border-radius: 0.3em;
+  font-size: 0.95em;
+  position: relative;
+  top: -2px;
+}
+
+.warning-block {
+  background-color: #3a3f47; /* fondo oscuro */
+  color: #facc15; /* amarillo brillante */
+  padding: 1rem;
+  border-radius: 0.5rem;
+  font-family: "Fira Code", monospace;
+  font-size: 0.95rem;
+  overflow-x: auto; /* para que no se rompa el layout si el texto es largo */
+  margin: 1rem 0; /* separación visual */
+  font-weight: 700;
+  font-size: 16px;
+}
+
+body {
+  font-family: "Iosevka", monospace !important;
+}
+
+/* Ajustar código y bloques */
+code,
+pre,
+kbd,
+samp {
+  font-family: "Iosevka", monospace !important;
 }
