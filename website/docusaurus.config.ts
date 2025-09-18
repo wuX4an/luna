@@ -5,8 +5,9 @@ import type * as Preset from "@docusaurus/preset-classic";
 
 const config: Config = {
   title: "Luna",
-  tagline: "Effortless Lua scripting for modern applications",
-  favicon: "img/favicon.ico",
+  tagline:
+    "Lua runtime with extended standard library, ready to build for common devices",
+  favicon: "img/luna.svg",
   future: {
     v4: true,
   },
@@ -23,57 +24,68 @@ const config: Config = {
       {
         docs: {
           sidebarPath: "./sidebars.ts",
-          path: path.resolve(__dirname, "../docs"), // <-- Aquí apuntas a la carpeta real
+          path: path.resolve(__dirname, "../docs"),
           editUrl: "https://github.com/wux4an/luna/tree/main/docs",
         },
         theme: { customCss: "./src/css/custom.css" },
       } satisfies Preset.Options,
     ],
   ],
+  plugins: [
+    [
+      require.resolve("@easyops-cn/docusaurus-search-local"),
+      {
+        hashed: true,
+        language: ["en"],
+        docsRouteBasePath: "/",
+        indexBlog: false,
+        highlightSearchTermsOnTargetPage: true,
+        explicitSearchResultPath: true,
+        docsDir: "../docs",
+      },
+    ],
+  ],
   themeConfig: {
-    image: "img/luna.png",
+    image: "img/luna.svg",
     docs: {
-      sidebar: { hideable: true, autoCollapseCategories: true },
+      sidebar: { hideable: false, autoCollapseCategories: true },
+    },
+    colorMode: {
+      disableSwitch: true,
     },
     navbar: {
       title: "Luna",
-      logo: { alt: "Luna Logo", src: "img/logo.png" },
+      logo: { alt: "Luna Logo", src: "img/luna.svg" },
       items: [
+        {
+          type: "search",
+          position: "left",
+        },
         {
           type: "docSidebar",
           sidebarId: "tutorialSidebar",
-          position: "left",
-          label: "Tutorial",
+          position: "right",
+          label: "Docs",
+        },
+        {
+          type: "html",
+          position: "right",
+          value: '<span style="color:#8d8e94;">|</span>',
         },
         {
           href: "https://github.com/wux4an/luna",
           label: "GitHub",
           position: "right",
         },
-      ],
-    },
-    footer: {
-      style: "dark",
-      links: [
-        { title: "Docs", items: [{ label: "Tutorial", to: "/docs" }] },
         {
-          title: "Community",
-          items: [
-            {
-              label: "Github Discussions",
-              href: "https://github.com/wux4an/luna/discussions",
-            },
-          ],
-        },
-        {
-          title: "More",
-          items: [{ label: "GitHub", href: "https://github.com/wux4an/luna" }],
+          type: "html",
+          position: "right",
+          value: '<span style="margin:0 2px;"></span>',
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Luna. Built with ❤️ and Lua`,
     },
     prism: {
-      theme: prismThemes.github,
+      theme: prismThemes.dracula,
       darkTheme: prismThemes.dracula,
       additionalLanguages: ["lua", "toml"],
     },

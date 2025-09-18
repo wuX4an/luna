@@ -21,8 +21,28 @@
 }
 
 .features {
-  background-color: #0e1c49;
-  color: #dae0ee;
+  display: flex;
+  justify-content: space-between; /* separa las cajas */
+  flex-wrap: wrap; /* permite que bajen si la pantalla es pequeña */
+  gap: 20px; /* espacio entre cajas */
+  padding: 20px;
+}
+
+.row {
+  display: flex;
+  width: 100%;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.featureBox {
+  flex: 1 1 calc(33% - 20px); /* 3 cajas por fila, con espacio */
+  background-color: #202127;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  min-width: 200px; /* evita que se achiquen demasiado */
 }
 
 .featureCard {
@@ -38,4 +58,41 @@
   width: 120px;
   height: 120px;
   margin-bottom: 1rem;
+}
+
+.buttonDownload {
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.75rem;
+  font-weight: 700;
+  font-size: 1rem;
+  color: white;
+  background: -webkit-linear-gradient(
+    280deg,
+    #1f7a3f,
+    #28a745
+  ); /* verde profundo a vibrante */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  border: none;
+  transition:
+    background 0.3s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    color 0.3s ease;
+}
+
+.buttonDownload:hover {
+  background: -webkit-linear-gradient(
+    280deg,
+    #28a745,
+    #3ec76d
+  ); /* verde más claro al hover */
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.5);
+  color: white;
+  cursor: pointer;
+}
+
+.buttonDownload:active {
+  transform: translateY(0);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
 }
