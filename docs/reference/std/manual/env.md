@@ -7,7 +7,9 @@ It supports loading variables from `.env` files, getting values, and setting new
 
 ## Functions
 
-### `env.load(filename: string): boolean`
+### `env.load`
+
+`(filename: string): boolean`
 
 Loads variables from a `.env` file into memory and the system environment.
 
@@ -31,7 +33,9 @@ end
 
 ---
 
-### `env.get(key: string): string?`
+### `env.get`
+
+`(key: string): string?`
 
 Retrieves the value of a loaded environment variable.
 
@@ -54,7 +58,9 @@ print("API_KEY:", api_key)
 
 ---
 
-### `env.set(key: string, value: string): boolean`
+### `env.set`
+
+`(key: string, value: string): boolean`
 
 Sets or updates an environment variable **in memory and in the system environment**.
 

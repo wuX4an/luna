@@ -7,7 +7,9 @@ It supports creating databases, executing SQL statements, performing transaction
 
 ## Functions
 
-### `sqlite.open(path: string): (db, err)`
+### `sqlite.open`
+
+`(path: string): (db, err)`
 
 Opens a SQLite database at the given path. Use `":memory:"` for an in-memory database.
 
@@ -21,7 +23,9 @@ assert(db, err)
 
 ---
 
-### `db:exec(sql: string): (ok, err)`
+### `db:exec`
+
+`(sql: string): (ok, err)`
 
 Executes an SQL statement without returning rows (e.g., `CREATE`, `INSERT`, `UPDATE`).
 
@@ -38,7 +42,9 @@ db:exec([[
 
 ---
 
-### `db:transaction(fn: function): (ok, err)`
+### `db:transaction`
+
+`(fn: function): (ok, err)`
 
 Executes multiple SQL statements atomically inside a transaction.
 
@@ -55,7 +61,9 @@ end)
 
 ---
 
-### `db:query(sql: string): (rows, err)`
+### `db:query`
+
+`(sql: string): (rows, err)`
 
 Executes a query returning rows (e.g., `SELECT`).
 
@@ -88,7 +96,9 @@ rows:close()
 
 ---
 
-### `db:close()`
+### `db:close`
+
+`()`
 
 Closes the database connection.
 

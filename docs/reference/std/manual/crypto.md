@@ -6,7 +6,9 @@ The `std:crypto` module provides functions for **hashing, HMAC, UUID generation,
 
 ## Functions
 
-### `crypto.hash(algorithm: string, data: string): string`
+### `crypto.hash`
+
+`(algorithm: string, data: string): string`
 
 Computes the hash of `data` using the specified `algorithm`.
 
@@ -27,7 +29,9 @@ print(crypto.hash("sha256", "hello world"))
 
 ---
 
-### `crypto.hmac(algorithm: string, key: string, data: string): string`
+### `crypto.hmac`
+
+`(algorithm: string, key: string, data: string): string`
 
 Generates a **HMAC** for `data` using `key` and the specified `algorithm`.
 
@@ -49,7 +53,9 @@ print(crypto.hmac("sha1", "secret", "message"))
 
 ---
 
-### `crypto.random_bytes(n: number): string`
+### `crypto.random_bytes`
+
+`(n: number): string`
 
 Generates `n` cryptographically secure random bytes.
 
@@ -70,7 +76,9 @@ print(rb)
 
 ---
 
-### `crypto.uuid(): string`
+### `crypto.uuid`
+
+`crypto.uuid(): string`
 
 Generates a **UUID v4** string.
 
@@ -101,3 +109,5 @@ print(crypto.uuid())
 - `md5` is fast but **not recommended for cryptographic security**.
 - `sha1` is more secure than `md5` but considered **weak for new systems**.
 - `sha256` is the recommended default for most **secure hashing needs**.
+
+---

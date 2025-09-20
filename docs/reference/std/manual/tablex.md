@@ -6,7 +6,9 @@ The `std:tablex` module provides utility functions to manipulate Lua tables. It 
 
 ## Functions:
 
-### `tablex.raw(tbl: table): table`
+### `tablex.raw`
+
+`(tbl: table): table`
 
 Returns a shallow copy of the table suitable for printing or inspection.
 
@@ -27,7 +29,9 @@ print(tablex.raw(items))
 
 ---
 
-### `tablex.map(tbl: table, fn: function): table`
+### `tablex.map`
+
+`(tbl: table, fn: function): table`
 
 Applies a function to each element of the table and returns a new table with the results.
 
@@ -49,7 +53,9 @@ print(tablex.raw(map))
 
 ---
 
-### `tablex.filter(tbl: table, fn: function): table`
+### `tablex.filter`
+
+`(tbl: table, fn: function): table`
 
 Filters a table by applying a predicate function, returning only elements that satisfy the condition.
 
@@ -68,4 +74,5 @@ local filter = tablex.filter({ 1, 2, 3, 4 }, function(v) return v % 2 == 0 end)
 print(tablex.raw(filter))
 -- { 2, 4 }
 ```
+
 ---

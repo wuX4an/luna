@@ -7,7 +7,9 @@ It supports common HTTP methods (`GET`, `POST`, etc.), headers, query parameters
 
 ## Functions
 
-### `http.request(method: string, url: string, opts: table?): table?`
+### `http.request`
+
+`(method: string, url: string, opts: table?): table?`
 
 Performs an HTTP request.
 

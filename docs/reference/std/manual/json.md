@@ -7,7 +7,9 @@ It is useful for data interchange, API communication, and configuration parsing.
 
 ## Functions
 
-### `json.encode(tbl: table): string`
+### `json.encode`
+
+`(tbl: table): string`
 
 Encodes a Lua table into a JSON string. Nested tables and arrays are supported.
 
@@ -30,7 +32,9 @@ print(str)
 
 ---
 
-### `json.decode(str: string): table`
+### `json.decode`
+
+`(str: string): table`
 
 Decodes a JSON string into a Lua table. Nested objects and arrays are converted recursively.
 

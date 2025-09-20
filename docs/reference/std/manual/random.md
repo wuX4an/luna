@@ -7,7 +7,9 @@ It is useful for games, simulations, testing, and any scenario that requires non
 
 ## Functions
 
-### `random.choice(items: table, weights: table?): any`
+### `random.choice`
+
+`(items: table, weights: table?): any`
 
 Selects a random item from a list. Optionally, you can provide weights to bias the selection.
 
@@ -30,7 +32,9 @@ print("Chosen item:", random.choice(items, weights))
 
 ---
 
-### `random.int(min: integer, max: integer, step: integer?): integer`
+### `random.int`
+
+`(min: integer, max: integer, step: integer?): integer`
 
 Generates a random integer within a specified range and optional step.
 
@@ -51,7 +55,9 @@ print(random.int(1, 10, 2)) -- random integer between 1 and 10 with step 2
 
 ---
 
-### `random.float(min: number, max: number, precision: integer?): number`
+### `random.float`
+
+`(min: number, max: number, precision: integer?): number`
 
 Generates a random float number within a specified range and optional decimal precision.
 
@@ -74,7 +80,9 @@ print(random.float(10.5, 99.9, 0))  -- float between 10.5 and 99.9 as integer
 
 ---
 
-### `random.take(items: table, n: integer): table`
+### `random.take`
+
+`(items: table, n: integer): table`
 
 Returns a table containing n randomly selected items from the input table.
 

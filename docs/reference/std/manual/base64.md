@@ -7,7 +7,9 @@ It is useful for binary manipulation, transmitting data in plain text, and ensur
 
 ## Functions:
 
-### `base64.encode(input: string): string`
+### `base64.encode`
+
+`(input: string): string`
 
 Encodes a string into its Base64 representation.
 
@@ -27,7 +29,9 @@ print(base64.encode("Hello Luna"))
 
 ---
 
-### `base64.decode(input: string): string`
+### `base64.decode`
+
+`(input: string): string`
 
 Decodes a Base64 string back into its original form.
 
@@ -44,4 +48,5 @@ local base64 = require("std:base64")
 print(base64.decode("Tm90Y2g="))
 -- "Notch"
 ```
+
 ---

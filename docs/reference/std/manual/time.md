@@ -7,7 +7,9 @@ It is useful for logging, scheduling, time calculations, and formatting dates fo
 
 ## Functions
 
-### `time.now(): integer`
+`time.now`
+
+`(): integer`
 
 Returns the current Unix timestamp (seconds since January 1, 1970).
 
@@ -26,7 +28,9 @@ print("Current timestamp:", now)
 
 ---
 
-### `time.format(format_string: string, timestamp: integer): string`
+### `time.format`
+
+`(format_string: string, timestamp: integer): string`
 
 Formats a given timestamp into a human-readable string according to the specified format.
 Format strings follow a `strftime`-style syntax.
@@ -51,7 +55,9 @@ print(formatted)
 
 ---
 
-### `time.sleep(milliseconds: integer)`
+### `time.sleep`
+
+`(milliseconds: integer)`
 
 Pauses execution for a specified amount of time.
 

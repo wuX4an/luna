@@ -7,7 +7,9 @@ It includes **trigonometry with unit specification**, exponentiation, logarithms
 
 ## Functions
 
-### `math.cos(x: number, unit: 'r'|'g'): number`
+### `math.cos`
+
+`(x: number, unit: 'r'|'g'): number`
 
 Returns the cosine of `x`.
 
@@ -28,7 +30,9 @@ print(math.cos(60, 'g'))           -- 0.5
 
 ---
 
-### `math.sin(x: number, unit: 'r'|'g'): number`
+### `math.sin`
+
+`(x: number, unit: 'r'|'g'): number`
 
 Returns the sine of `x`.
 
@@ -49,7 +53,9 @@ print(math.sin(90, 'g'))           -- 1
 
 ---
 
-### `math.tan(x: number, unit: 'r'|'g'): number`
+### `math.tan`
+
+`(x: number, unit: 'r'|'g'): number`
 
 Returns the tangent of `x`.
 
@@ -70,7 +76,9 @@ print(math.tan(45, 'g'))           -- 1
 
 ---
 
-### `math.sqrt(x: number): number`
+### `math.sqrt`
+
+`(x: number): number`
 
 Returns the square root of `x`.
 
@@ -89,7 +97,9 @@ print(math.sqrt(16))  -- 4
 
 ---
 
-### `math.pow(x: number, y: number): number`
+### `math.pow`
+
+`(x: number, y: number): number`
 
 Returns `x` raised to the power of `y`.
 
@@ -109,7 +119,9 @@ print(math.pow(2, 3))  -- 8
 
 ---
 
-### `math.fact(n: integer): integer`
+### `math.fact`
+
+`(n: integer): integer`
 
 Returns the factorial of `n`.
 
@@ -128,7 +140,9 @@ print(math.fact(5))  -- 120
 
 ---
 
-### `math.log(x: number): number`
+### `math.log`
+
+`(x: number): number`
 
 Returns the natural logarithm (base e) of `x`.
 

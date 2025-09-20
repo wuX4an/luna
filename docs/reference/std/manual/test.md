@@ -1,4 +1,4 @@
-#std:test
+# std:test
 
 The `std:test` module provides a lightweight testing framework for Lua.
 It supports assertions, named tests, test grouping with `describe`, and parameterized tests with `each`.
@@ -32,6 +32,8 @@ end
 - Keeps production code clean and backwards-compatible.
 - Cleaned by the builder.
 
+---
+
 ## How to run the tests
 
 1. **Set the environment variable and run your script:**
@@ -48,9 +50,13 @@ luna test main.lua
 
 > This will set `LUNA_RUN_TESTS` internally and execute all registered tests.
 
+---
+
 ## Functions
 
-### `test.run(name: string, fn: function)`
+### `test.run | test`
+
+`(name: string, fn: function)`
 
 Runs a named test.
 
@@ -67,17 +73,7 @@ local test = require("std:test")
 test.run("simple test", function()
     return test.expect(5):to_equal(4)  -- Expect 5 to equal 4
 end)
-```
 
----
-
-### `test(name: string, fn: function)`
-
-Shorthand inline test, equivalent to `test.run`.
-
-**Example:**
-
-```lua
 -- Inline test
 test("inline test", function()
     return test.expect(42):to_equal(41)
@@ -86,7 +82,9 @@ end)
 
 ---
 
-### `test.expect(value)`
+### `test.expect`
+
+`(value)`
 
 Creates an expectation object to assert values.
 
@@ -102,7 +100,9 @@ test.expect(2):to_equal(2)  -- This test passes
 
 ---
 
-### `test.describe(name: string, fn: function)`
+### `test.describe`
+
+`(name: string, fn: function)`
 
 Groups multiple related tests under a description.
 
@@ -125,7 +125,9 @@ end)
 
 ---
 
-### `test.each(cases: table, fn: function)`
+### `test.each`
+
+`(cases: table, fn: function)`
 
 Runs parameterized tests for each case in a table.
 
