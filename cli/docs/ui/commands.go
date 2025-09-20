@@ -6,8 +6,9 @@ import (
 
 var commandMap = map[string]string{
 	// INDEX
-	"":             Manual.Index,
-	"/index":       Manual.Index,
+	"/":            ManualTree(),
+	"/index":       ManualTree(),
+	"":             ManualTree(),
 	"/usage":       Manual.Usage.Index,
 	"/usage/start": Manual.Usage.Start,
 	"u/start":      Manual.Usage.Start,
@@ -87,10 +88,13 @@ var commandMap = map[string]string{
 
 func processCommand(m Model) Model {
 	inputVal := strings.ToLower(strings.TrimSpace(m.TextInput.Value()))
+
 	if content, ok := commandMap[inputVal]; ok {
 		m.Content = content
+		m.HeaderMsg = "" // limpiar mensaje si el comando existe
 	} else {
-		m.Content = "\u200B│ **Command not found:** `" + inputVal + "`\n\n" + Manual.Index
+		m.HeaderMsg = headerErrorStyle.Render("Command not found: `" + inputVal + "`")
 	}
+
 	return m
 }

@@ -1,7 +1,10 @@
 package ui
 
 import (
+	"fmt"
 	"luna"
+	"reflect"
+	"strings"
 )
 
 // Subestructuras
@@ -109,4 +112,48 @@ var Manual = ManualStruct{
 			Timer:     luna.MustReadDocFile("reference/std/web/manual/timer.md"),
 		},
 	},
+}
+
+// treeString genera una representación en árbol de cualquier struct
+func treeString(v interface{}, indent string) string {
+	val := reflect.ValueOf(v)
+	typ := val.Type()
+
+	// Si es un string, retornamos algo corto
+	if val.Kind() == reflect.String {
+		if val.String() == "" {
+			return "(empty)"
+		}
+		return ""
+	}
+
+	// Si es un struct, recorrer sus campos
+	if val.Kind() == reflect.Struct {
+		var b strings.Builder
+		for i := 0; i < val.NumField(); i++ {
+			field := typ.Field(i)
+			child := val.Field(i)
+
+			// Omitir campos Index
+			if field.Name == "Index" {
+				continue
+			}
+
+			// nombre del campo
+			b.WriteString(fmt.Sprintf("%s- %s\n", indent, field.Name))
+
+			// recursión con indentación
+			b.WriteString(treeString(child.Interface(), indent+"  "))
+		}
+		return b.String()
+	}
+
+	return ""
+}
+
+// Helper público
+func ManualTree() string {
+	header := "# Luna Manual Index\n\n---\n"
+	footer := "---\n Type `/<module>` to navigate. To return to the index just type  `/`"
+	return header + treeString(Manual, "") + footer
 }

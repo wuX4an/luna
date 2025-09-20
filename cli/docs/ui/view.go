@@ -16,9 +16,10 @@ var (
 
 	infoStyle = func() lipgloss.Style {
 		b := lipgloss.RoundedBorder()
-		b.Left = "┤"
+		b.BottomLeft = "┴"
 		return titleStyle.BorderStyle(b)
 	}()
+	headerErrorStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("9"))
 )
 
 // View renders the TUI.
@@ -28,21 +29,31 @@ func (m Model) View() string {
 	}
 
 	contentView := m.Viewport.View()
+	header := m.headerView()
+	footer := m.footerView()
 
-	if m.InputActive {
-		return fmt.Sprintf("%s\n%s\n%s", m.headerView(), contentView, m.TextInput.View())
-	}
-	return fmt.Sprintf("%s\n%s\n%s", m.headerView(), contentView, m.footerView())
+	// Si el input está activo, lo ponemos entre contenido y footer
+	// if m.InputActive {
+	// 	return fmt.Sprintf("%s\n%s\n%s\n%s", header, contentView, m.TextInput.View(), footer)
+	// }
+	//
+	// Si no, solo contenido normal + footer
+	return fmt.Sprintf("%s\n%s\n%s", header, contentView, footer)
 }
 
 func (m Model) headerView() string {
-	lines := strings.SplitN(m.Content, "\n", 2)
-	title := ""
-	if len(lines) > 0 {
-		title = lines[0]
+	title := m.HeaderMsg
+
+	// Si no hay mensaje, usamos la primera línea del contenido
+	if title == "" {
+		lines := strings.SplitN(m.Content, "\n", 2)
+		if len(lines) > 0 {
+			title = lines[0]
+		}
+		title = strings.ReplaceAll(title, "#", "")
+		title = strings.TrimSpace(title)
 	}
-	title = strings.ReplaceAll(title, "#", "")
-	title = strings.Replace(title, " ", "", 1)
+
 	titleStyled := titleStyle.Render(title)
 	line := strings.Repeat("─", max(0, m.Viewport.Width-lipgloss.Width(titleStyled)))
 	return lipgloss.JoinHorizontal(lipgloss.Center, titleStyled, line)
@@ -51,7 +62,17 @@ func (m Model) headerView() string {
 func (m Model) footerView() string {
 	info := infoStyle.Render(fmt.Sprintf("%3.f%%", m.Viewport.ScrollPercent()*100))
 	line := strings.Repeat("─", max(0, m.Viewport.Width-lipgloss.Width(info)))
-	return lipgloss.JoinHorizontal(lipgloss.Center, line, info)
+
+	if m.InputActive {
+		inputAboveLine := lipgloss.JoinVertical(lipgloss.Left,
+			m.TextInput.View(),
+			line,
+		)
+
+		return lipgloss.JoinHorizontal(lipgloss.Bottom, inputAboveLine, info)
+	}
+
+	return lipgloss.JoinHorizontal(lipgloss.Bottom, line, info)
 }
 
 func max(a, b int) int {

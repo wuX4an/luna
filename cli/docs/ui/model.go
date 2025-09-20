@@ -13,6 +13,7 @@ type Model struct {
 	Ready       bool   // Indica si el viewport ha sido inicializado
 	InputActive bool   // Controla si el text input está actualmente enfocado
 	Content     string // El contenido mostrado en el viewport
+	HeaderMsg   string // <-- nuevo campo
 }
 
 // InitialModel devuelve un nuevo modelo inicializado.
@@ -23,11 +24,11 @@ func InitialModel() Model {
 	ti.Width = 40
 
 	// Carga el contenido de index.txt embebido por defecto
-	initialContent := Manual.Index
+	initialContent := ManualTree()
 
 	return Model{
 		TextInput:   ti,
-		InputActive: false, // El input está activo inicialmente
+		InputActive: false,
 		Content:     initialContent,
 	}
 }
