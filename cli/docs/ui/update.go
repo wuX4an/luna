@@ -9,6 +9,7 @@ import (
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/glamour"
+	"github.com/charmbracelet/lipgloss"
 )
 
 // Update handles incoming messages and updates the model accordingly.
@@ -66,14 +67,19 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	// Redimensionamiento
 	case tea.WindowSizeMsg:
 		if !m.Ready {
-			m.Viewport = viewport.New(msg.Width, msg.Height-2)
+			headerHeight := lipgloss.Height(m.headerView())
+			footerHeight := lipgloss.Height(m.footerView())
+			m.Viewport = viewport.New(msg.Width, msg.Height-headerHeight-footerHeight-2)
 			m.Viewport.SetContent(renderMarkdown(m.Content))
 			m.Ready = true
 		} else {
+
+			headerHeight := lipgloss.Height(m.headerView())
+			footerHeight := lipgloss.Height(m.footerView())
 			m.Viewport.Width = msg.Width
-			m.Viewport.Height = msg.Height - 2
+			m.Viewport.Height = msg.Height - headerHeight - footerHeight - 2
 		}
-		m.TextInput.Width = msg.Width - 4
+		// m.TextInput.Width = msg.Width - 4
 	}
 
 	// Actualiza input o viewport según corresponda
